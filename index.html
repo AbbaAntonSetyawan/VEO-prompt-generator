@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VEO 3 Prompt Generator V4</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* bg-gray-100 */
+        }
+        .container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: white;
+            border-radius: 0.75rem; /* rounded-xl */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .input-group {
+            margin-bottom: 1.25rem;
+        }
+        .input-group label.group-label {
+            display: block;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+            color: #374151; /* text-gray-700 */
+            font-size: 1rem;
+        }
+        .input-group label.option-label {
+            font-weight: normal;
+            color: #4b5563; /* text-gray-600 */
+            font-size: 0.875rem; 
+            margin-left: 0.5rem;
+            display: inline-flex;
+            align-items: center;
+        }
+        .input-group label.option-label .description {
+            display: block;
+            font-size: 0.8rem;
+            color: #6b7280; /* text-gray-500 */
+            margin-left: 1.75rem;
+            margin-top: 0.2rem;
+        }
+        .input-group input[type="text"],
+        .input-group select,
+        .input-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db; /* border-gray-300 */
+            border-radius: 0.5rem; /* rounded-lg */
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+        .input-group select:disabled {
+            background-color: #e5e7eb;
+            cursor: not-allowed;
+        }
+        .input-group textarea.subject-textarea {
+            min-height: calc(1.5em * 5 + 2 * 0.75rem); 
+            word-wrap: break-word;
+            white-space: pre-wrap;
+            overflow-y: auto;
+        }
+        .input-group input[type="text"]:focus,
+        .input-group select:focus,
+        .input-group textarea:focus {
+            outline: none;
+            border-color: #3b82f6; /* border-blue-500 */
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+        }
+        .input-group input[type="checkbox"],
+        .input-group input[type="radio"] {
+            height: 1rem; width: 1rem;
+            color: #3b82f6; /* text-blue-600 */
+            border-color: #d1d5db; /* border-gray-300 */
+            border-radius: 0.25rem;
+            vertical-align: middle;
+        }
+        .input-group input[type="radio"] {
+            border-radius: 9999px; /* rounded-full */
+        }
+        .input-group input[type="checkbox"]:focus,
+        .input-group input[type="radio"]:focus {
+            ring: 2px;
+            ring-color: #3b82f6; /* focus:ring-blue-500 */
+        }
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem; /* rounded-lg */
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            white-space: nowrap;
+        }
+        .btn-primary { background-color: #3b82f6; color: white; }
+        .btn-primary:hover { background-color: #2563eb; }
+        .btn-secondary { background-color: #6b7280; color: white; }
+        .btn-secondary:hover { background-color: #4b5563; }
+        .btn-success { background-color: #22c55e; color: white; }
+        .btn-success:hover { background-color: #16a34a; }
+        .btn-danger { background-color: #ef4444; color: white; }
+        .btn-danger:hover { background-color: #dc2626; }
+        
+        .prompt-output-container {
+            margin-top: 2.5rem; padding-top: 1.5rem;
+            border-top: 1px solid #e5e7eb; /* border-gray-200 */
+        }
+        .prompt-output-column h3 {
+            margin-top: 0; margin-bottom: 0.75rem;
+            font-weight: 600; color: #1f2937; /* text-gray-800 */
+            font-size: 1.125rem;
+        }
+        .prompt-output-column textarea,
+        .prompt-output-column .readonly-prompt {
+            width: 100%; min-height: 12rem;
+            padding: 0.75rem; border: 1px solid #d1d5db;
+            border-radius: 0.5rem; font-size: 0.9rem; line-height: 1.5;
+        }
+        .prompt-output-column .readonly-prompt {
+            background-color: #f9fafb; /* bg-gray-50 */
+            white-space: pre-wrap; word-wrap: break-word; overflow-y: auto;
+        }
+        #copyNotification {
+            position: fixed; bottom: 20px; left: 50%;
+            transform: translateX(-50%);
+            background-color: #10b981; /* bg-green-500 */
+            color: white; padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            z-index: 1000; opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        .icon { width: 1.25rem; height: 1.25rem; margin-right: 0.5rem; }
+        .hidden { display: none; }
+        
+        .detail-section-wrapper {
+            margin-top: 1.5rem; margin-bottom: 1.5rem;
+            padding: 1rem; border: 1px solid #e5e7eb; 
+            border-radius: 0.375rem; /* rounded-md */
+            background-color: #f9fafb; 
+        }
+        .detail-section-wrapper h3.section-title {
+            font-size: 1.125rem; font-weight: 600; 
+            color: #374151; margin-bottom: 0.75rem; 
+        }
+        .sub-input-group {
+            margin-top: 1rem; padding-top: 0.75rem;
+            border-top: 1px dashed #e0e0e0;
+        }
+        .grid-container-for-dropdowns {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+         @media (min-width: 768px) {
+            .grid-container-for-dropdowns {
+                 grid-template-columns: repeat(2, 1fr);
+            }
+         }
+
+        /* Tab styling */
+        .tab-buttons button {
+            padding: 0.75rem 1.25rem;
+            margin-right: 0.5rem;
+            border: 1px solid #d1d5db;
+            border-bottom: none;
+            background-color: #e5e7eb; /* bg-gray-200 */
+            border-radius: 0.375rem 0.375rem 0 0; /* rounded-t-md */
+            font-weight: 500;
+            color: #4b5563; /* text-gray-600 */
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s;
+        }
+        .tab-buttons button.active {
+            background-color: white;
+            color: #3b82f6; /* text-blue-600 */
+            border-bottom: 1px solid white; 
+            position: relative;
+            top: 1px;
+        }
+        .tab-content-container { 
+            border: 1px solid #d1d5db;
+            padding: 1.5rem;
+            border-radius: 0 0.375rem 0.375rem 0.375rem; 
+            background-color: white;
+            margin-top: -1px; 
+        }
+        .tab-pane { display: none; }
+        .tab-pane.active { display: block; }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 0.5rem 1rem;
+            margin-top: 0.5rem;
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3b82f6;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-800">VEO 3 Prompt Generator V4</h1>
+            <p class="text-gray-600 mt-2">Oleh Anton Setyawan untuk pejuang receh yang tangguh</p>
+        </header>
+
+        <!-- Template Manager -->
+        <fieldset class="border border-gray-300 p-4 rounded-lg mb-8">
+            <legend class="text-lg font-semibold text-gray-700 px-2">Manajer Template</legend>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
+                <div>
+                    <label for="templateName" class="block text-sm font-medium text-gray-700 mb-1">Nama Template (Simpan ke Browser):</label>
+                    <input type="text" id="templateName" placeholder="Ksatria Tua di Hutan" class="w-full">
+                </div>
+                <div class="flex space-x-2">
+                     <button type="button" id="saveTemplateBtn" class="btn btn-success flex-grow">Simpan di Browser</button>
+                </div>
+                <div>
+                    <label for="loadTemplateSelect" class="block text-sm font-medium text-gray-700 mb-1">Muat Template dari Browser:</label>
+                    <select id="loadTemplateSelect" class="w-full">
+                        <option value="">-- Pilih Template --</option>
+                    </select>
+                </div>
+                <div class="flex space-x-2">
+                    <button type="button" id="loadTemplateBtn" class="btn btn-primary flex-grow">Muat</button>
+                    <button type="button" id="deleteTemplateBtn" class="btn btn-danger flex-grow">Hapus</button>
+                </div>
+                 <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 pt-4 border-t">
+                     <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Impor / Ekspor Template</label>
+                         <div class="flex space-x-2">
+                            <button type="button" id="exportTemplateBtn" class="btn btn-secondary flex-grow">Simpan ke File</button>
+                            <button type="button" id="importTemplateBtn" class="btn btn-secondary flex-grow">Muat dari File</button>
+                            <input type="file" id="importFileInput" class="hidden" accept=".json">
+                         </div>
+                     </div>
+                 </div>
+            </div>
+        </fieldset>
+        <!-- End of Template Manager -->
+
+
+        <form id="promptForm">
+            <div class="tab-buttons mb-0">
+                <button type="button" class="tab-button active" data-tab="tab1">Subjek Utama</button>
+                <button type="button" class="tab-button" data-tab="tab2">Subjek Kedua</button>
+                <button type="button" class="tab-button" data-tab="tab3">Subjek Ketiga</button>
+            </div>
+
+            <div class="tab-content-container">
+                <div id="tab1" class="tab-pane active"></div>
+                <div id="tab2" class="tab-pane"></div>
+                <div id="tab3" class="tab-pane"></div>
+            </div>
+
+            <h2 class="text-xl font-semibold text-gray-700 mt-8 mb-4 pt-4 border-t border-gray-300">Pengaturan Video Global</h2>
+             <div class="grid md:grid-cols-2 gap-x-6">
+                <div class="input-group">
+                    <label for="setting_global" class="group-label">Tempat/Latar</label>
+                    <input type="text" id="setting_global" name="setting_global" placeholder="Mis: sebuah kastil kuno di atas bukit">
+                </div>
+                <div class="input-group">
+                    <label for="time_global" class="group-label">Waktu</label>
+                    <select id="time_global" name="time_global" class="subject-modifier-item-select">
+                        <option value="" data-eng="">-- Pilih Waktu --</option>
+                        <option value="Pagi Hari (Matahari Terbit)" data-eng="sunrise">Pagi Hari (Matahari Terbit)</option>
+                        <option value="Siang Hari" data-eng="daytime">Siang Hari</option>
+                        <option value="Sore Hari (Golden Hour)" data-eng="golden hour">Sore Hari (Golden Hour)</option>
+                        <option value="Senja (Twilight/Dusk)" data-eng="twilight">Senja (Twilight/Dusk)</option>
+                        <option value="Malam Hari" data-eng="night">Malam Hari</option>
+                        <option value="Tengah Malam" data-eng="midnight">Tengah Malam</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="input-group">
+                <label for="cameraMovement_global" class="group-label">Gerakan Kamera</label>
+                <select id="cameraMovement_global" name="cameraMovement_global" class="subject-modifier-item-select">
+                     <option value="" data-eng="">-- Pilih Gerakan Kamera --</option>
+                     <option value="Bidikan Statis" data-eng="Static Shot">Static Shot (Bidikan Statis)</option>
+                     <option value="Bidikan Jarak Dekat" data-eng="Closeup">Closeup (Bidikan Jarak Dekat)</option>
+                     <option value="Perbesar" data-eng="Zoom In">Zoom In (Perbesar)</option>
+                     <option value="Perkecil" data-eng="Zoom Out">Zoom Out (Perkecil)</option>
+                     <option value="Geser Kiri" data-eng="Pan Left">Pan Left (Geser Kiri)</option>
+                     <option value="Geser Kanan" data-eng="Pan Right">Pan Right (Geser Kanan)</option>
+                     <option value="Geser Atas" data-eng="Pan Up">Pan Up (Geser Atas)</option>
+                     <option value="Geser Bawah" data-eng="Pan Down">Pan Down (Geser Bawah)</option>
+                     <option value="Dongak ke Atas" data-eng="Tilt Up">Tilt Up (Dongak ke Atas)</option>
+                     <option value="Tunduk ke Bawah" data-eng="Tilt Down">Tilt Down (Tunduk ke Bawah)</option>
+                     <option value="Putar Searah Jarum Jam" data-eng="Roll Clockwise">Roll Clockwise (Putar Searah Jarum Jam)</option>
+                     <option value="Putar Berlawanan Jarum Jam" data-eng="Roll Counter-Clockwise">Roll Counter-Clockwise (Putar Berlawanan Jarum Jam)</option>
+                     <option value="Maju Mendekat" data-eng="Dolly In">Dolly In (Maju Mendekat - Kamera Bergerak)</option>
+                     <option value="Mundur Menjauh" data-eng="Dolly Out">Dolly Out (Mundur Menjauh - Kamera Bergerak)</option>
+                     <option value="Geser ke Kiri (Kamera Bergerak)" data-eng="Truck Left">Truck Left (Geser ke Kiri - Kamera Bergerak)</option>
+                     <option value="Geser ke Kanan (Kamera Bergerak)" data-eng="Truck Right">Truck Right (Geser ke Kanan - Kamera Bergerak)</option>
+                     <option value="Naik ke Atas (Kamera Bergerak)" data-eng="Pedestal Up">Pedestal Up (Naik ke Atas - Kamera Bergerak)</option>
+                     <option value="Turun ke Bawah (Kamera Bergerak)" data-eng="Pedestal Down">Pedestal Down (Turun ke Bawah - Kamera Bergerak)</option>
+                     <option value="Bidikan Mengikuti Subjek" data-eng="Tracking Shot">Tracking Shot (Bidikan Mengikuti Subjek)</option>
+                     <option value="Bidikan Derek Naik/Turun" data-eng="Crane Shot">Crane Shot (Bidikan Derek Naik/Turun)</option>
+                     <option value="Bidikan Genggam" data-eng="Handheld Shot">Handheld Shot (Bidikan Genggam - Terlihat Sedikit Goyah)</option>
+                     <option value="Bidikan Udara" data-eng="Aerial Shot">Aerial Shot (Bidikan Udara)</option>
+                     <option value="Bidikan Drone" data-eng="Drone Shot">Drone Shot (Bidikan Drone)</option>
+                     <option value="Bidikan Mengorbit Subjek" data-eng="Orbit Shot">Orbit Shot (Bidikan Mengorbit Subjek)</option>
+                     <option value="Bidikan 360 Derajat" data-eng="360 Degree Shot">360 Degree Shot (Bidikan 360 Derajat)</option>
+                     <option value="Geser Horizontal Cepat" data-eng="Whip Pan">Whip Pan (Geser Horizontal Cepat)</option>
+                     <option value="Perbesar Sangat Cepat" data-eng="Crash Zoom">Crash Zoom (Perbesar Sangat Cepat)</option>
+                     <option value="Gerak Lambat" data-eng="Slow Motion">Slow Motion (Gerak Lambat)</option>
+                     <option value="Selang Waktu" data-eng="Time-lapse">Time-lapse (Selang Waktu)</option>
+                     <option value="Bidikan Rangkaian Panjang" data-eng="Sequence Shot">Sequence Shot / Long Take (Bidikan Rangkaian Panjang Tanpa Cut)</option>
+                     <option value="Sudut Pandang Orang Pertama" data-eng="First-person POV">First-person POV (Sudut Pandang Orang Pertama)</option>
+                     <option value="Sudut Pandang Orang Ketiga" data-eng="Third-person POV">Third-person POV (Sudut Pandang Orang Ketiga)</option>
+                     <option value="Gerakan Vertikal Kamera dengan Crane" data-eng="Boom Up/Down">Boom Up/Down (Gerakan Vertikal Kamera dengan Crane)</option>
+                     <option value="Efek Vertigo" data-eng="Zolly Shot (Dolly Zoom)">Zolly Shot / Dolly Zoom (Efek Vertigo)</option>
+                </select>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-x-6">
+                <div class="input-group">
+                    <label for="lighting_global" class="group-label">Pencahayaan</label>
+                    <select id="lighting_global" name="lighting_global" class="subject-modifier-item-select">
+                        <option value="" data-eng="">-- Pilih Pencahayaan --</option>
+                        <option value="Natural Light" data-eng="Natural Light">Natural Light</option><option value="Bright Daylight" data-eng="Bright Daylight">Bright Daylight</option><option value="Overcast" data-eng="Overcast">Overcast</option><option value="Golden Hour Lighting" data-eng="Golden Hour Lighting">Golden Hour Lighting</option><option value="Blue Hour Lighting" data-eng="Blue Hour Lighting">Blue Hour Lighting</option><option value="Twilight Lighting" data-eng="Twilight Lighting">Twilight Lighting</option><option value="Night Scene Lighting" data-eng="Night Scene Lighting">Night Scene Lighting</option><option value="Moonlight" data-eng="Moonlight">Moonlight</option><option value="Artificial Light" data-eng="Artificial Light">Artificial Light</option><option value="Studio Lighting" data-eng="Studio Lighting">Studio Lighting</option><option value="Rembrandt Lighting" data-eng="Rembrandt Lighting">Rembrandt Lighting</option><option value="High Key Lighting" data-eng="High Key Lighting">High Key Lighting</option><option value="Low Key Lighting" data-eng="Low Key Lighting">Low Key Lighting</option><option value="Backlight" data-eng="Backlight">Backlight</option><option value="Silhouette" data-eng="Silhouette">Silhouette</option><option value="Neon Lights" data-eng="Neon Lights">Neon Lights</option><option value="Cinematic Lighting" data-eng="Cinematic Lighting">Cinematic Lighting</option><option value="Volumetric Lighting" data-eng="Volumetric Lighting">Volumetric Lighting</option><option value="Ambient Lighting" data-eng="Ambient Lighting">Ambient Lighting</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="videoStyle_global" class="group-label">Gaya Video</label>
+                    <select id="videoStyle_global" name="videoStyle_global" class="subject-modifier-item-select">
+                        <option value="" data-eng="">-- Pilih Gaya Video --</option>
+                        <option value="Photorealistic" data-eng="Photorealistic">Photorealistic</option><option value="Cinematic" data-eng="Cinematic">Cinematic</option><option value="Anime" data-eng="Anime">Anime</option><option value="Manga Style" data-eng="Manga Style">Manga Style</option><option value="Cartoon" data-eng="Cartoon">Cartoon</option><option value="3D Animation" data-eng="3D Animation">3D Animation</option><option value="Pixar Style" data-eng="Pixar Style">Pixar Style</option><option value="Disney Style" data-eng="Disney Style">Disney Style</option><option value="Ghibli Style" data-eng="Ghibli Style">Ghibli Style</option><option value="Impressionistic" data-eng="Impressionistic">Impressionistic</option><option value="Surreal" data-eng="Surreal">Surreal</option><option value="Abstract" data-eng="Abstract">Abstract</option><option value="Vintage Film" data-eng="Vintage Film">Vintage Film</option><option value="Film Noir" data-eng="Film Noir">Film Noir</option><option value="Cyberpunk" data-eng="Cyberpunk">Cyberpunk</option><option value="Steampunk" data-eng="Steampunk">Steampunk</option><option value="Fantasy" data-eng="Fantasy">Fantasy</option><option value="Sci-Fi" data-eng="Sci-Fi">Sci-Fi</option><option value="Documentary Style" data-eng="Documentary Style">Documentary Style</option><option value="Watercolor" data-eng="Watercolor">Watercolor</option><option value="Oil Painting" data-eng="Oil Painting">Oil Painting</option><option value="Pixel Art" data-eng="Pixel Art">Pixel Art</option><option value="Claymation" data-eng="Claymation">Claymation</option><option value="Vaporwave" data-eng="Vaporwave">Vaporwave</option><option value="Lo-fi" data-eng="Lo-fi">Lo-fi</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="videoMood_global" class="group-label">Suasana Video</label>
+                    <select id="videoMood_global" name="videoMood_global" class="subject-modifier-item-select">
+                        <option value="" data-eng="">-- Pilih Suasana Video --</option>
+                        <option value="Joyful" data-eng="Joyful">Joyful</option><option value="Sad" data-eng="Sad">Sad</option><option value="Mysterious" data-eng="Mysterious">Mysterious</option><option value="Suspenseful" data-eng="Suspenseful">Suspenseful</option><option value="Romantic" data-eng="Romantic">Romantic</option><option value="Peaceful" data-eng="Peaceful">Peaceful</option><option value="Energetic" data-eng="Energetic">Energetic</option><option value="Dark" data-eng="Dark">Dark</option><option value="Whimsical" data-eng="Whimsical">Whimsical</option><option value="Epic" data-eng="Epic">Epic</option><option value="Nostalgic" data-eng="Nostalgic">Nostalgic</option><option value="Dreamy" data-eng="Dreamy">Dreamy</option><option value="Tense" data-eng="Tense">Tense</option><option value="Comedic" data-eng="Comedic">Comedic</option><option value="Horror" data-eng="Horror">Horror</option><option value="Dramatic" data-eng="Dramatic">Dramatic</option><option value="Adventurous" data-eng="Adventurous">Adventurous</option><option value="Uplifting" data-eng="Uplifting">Uplifting</option><option value="Melancholic" data-eng="Melancholic">Melancholic</option>
+                    </select>
+                </div>
+            </div>
+
+
+            <div class="grid md:grid-cols-2 gap-x-6">
+                <div class="input-group">
+                    <label for="soundMusic" class="group-label">Suara atau Musik</label>
+                    <input type="text" id="soundMusic" name="soundMusic" placeholder="Mis: musik orkestra epik, suara alam, tanpa suara">
+                </div>
+                 <div class="input-group">
+                    <label class="group-label">Opsi Lain</label>
+                    <div class="flex items-center pt-2">
+                        <input id="noCaptionCheckbox" name="noCaptionCheckbox" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                        <label for="noCaptionCheckbox" class="ml-2 block text-sm text-gray-900">
+                            Tanpa Caption & Audio Bahasa Indonesia
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label class="group-label">Format & Orientasi Video</label>
+                 <select id="videoFormatOptionsContainer_global" name="videoFormat_global" class="subject-modifier-item-select w-full"></select>
+            </div>
+
+            <div class="input-group">
+                <label for="additionalDetails" class="group-label">Detail Tambahan</label>
+                <textarea id="additionalDetails" name="additionalDetails" rows="3" placeholder="Mis: kualitas 8K, sangat detail, fokus pada mata subjek, partikel debu beterbangan"></textarea>
+            </div>
+
+            <div class="flex flex-col sm:flex-row justify-end items-center mt-8 space-y-3 sm:space-y-0 sm:space-x-3">
+                <button type="button" id="clearFormBtn" class="btn btn-danger w-full sm:w-auto">
+                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9.75L14.25 12m0 0L12 14.25m2.25-2.25L14.25 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    Bersihkan Form
+                </button>
+                <button type="button" id="generateBtn" class="btn btn-primary w-full sm:w-auto">
+                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L1.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.25 12L17 14.25l-1.25-2.25L13.5 11l2.25-1.25L17 7.5l1.25 2.25L20.5 11l-2.25 1.25z" /></svg>
+                    Buat Prompt
+                </button>
+            </div>
+        </form>
+
+        <div id="promptResultContainer" class="prompt-output-container hidden">
+            <div class="grid md:grid-cols-2 gap-x-8">
+                <div class="prompt-output-column">
+                    <h3>Prompt Bahasa Indonesia (Dapat Diedit):</h3>
+                    <textarea id="generatedPromptIndonesian" spellcheck="false"></textarea>
+                     <button type="button" id="copyIndonesianBtn" class="btn btn-secondary mt-3 w-full">
+                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 011.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 00-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 01-1.125-1.125v-9.25m9.75 0h-3.25c-.621 0-1.125.504-1.125 1.125v7.5c0 .621.504 1.125 1.125 1.125h3.25c.621 0 1.125-.504 1.125-1.125v-7.5c0-.621-.504-1.125-1.125-1.125z" /></svg>
+                        Salin Prompt Indonesia
+                    </button>
+                </div>
+                <div class="prompt-output-column">
+                    <h3>Prompt Bahasa Inggris (Final):</h3>
+                    <div id="generatedPromptEnglish" class="readonly-prompt"></div>
+                     <button type="button" id="copyEnglishBtn" class="btn btn-secondary mt-3 w-full">
+                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 011.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 00-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 01-1.125-1.125v-9.25m9.75 0h-3.25c-.621 0-1.125.504-1.125 1.125v7.5c0 .621.504 1.125 1.125 1.125h3.25c.621 0 1.125-.504 1.125-1.125v-7.5c0-.621-.504-1.125-1.125-1.125z" /></svg>
+                        Salin Prompt Inggris
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gemini/Imagen API Section -->
+        <div id="aiInteractionContainer" class="prompt-output-container">
+             <h2 class="text-xl font-semibold text-gray-700 mb-4 pt-4 border-t border-gray-300">Pratinjau Gambar AI (Imagen)</h2>
+             <p class="text-sm text-gray-600 mb-4">Fitur ini menggunakan model Imagen dari Google untuk membuat pratinjau gambar berdasarkan prompt Bahasa Inggris Anda. Karena API untuk model video seperti Veo belum tersedia, ini adalah cara terbaik untuk memvisualisasikan adegan Anda.</p>
+             <div class="input-group">
+                <label for="apiKey" class="group-label !text-base">Google AI API Key Anda</label>
+                <input type="password" id="apiKey" name="apiKey" placeholder="Masukkan API Key Anda di sini" class="w-full">
+                <p class="text-xs text-gray-500 mt-1">API Key Anda tidak disimpan atau dibagikan. Anda bisa mendapatkannya dari <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-blue-600 hover:underline">Google AI Studio</a>.</p>
+             </div>
+             <div class="flex justify-end">
+                <button type="button" id="generateImageBtn" class="btn btn-success">
+                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"></path></svg>
+                    Buat Gambar Pratinjau
+                </button>
+             </div>
+             <div id="imageResultContainer" class="mt-6 hidden">
+                <h3 class="font-semibold text-gray-800 mb-2">Hasil Gambar:</h3>
+                <div id="imageLoader" class="flex justify-center items-center h-64 bg-gray-100 rounded-lg">
+                    <div class="loader"></div>
+                </div>
+                <div id="imageWrapper" class="hidden">
+                    <img id="generatedImage" src="" alt="Gambar yang dihasilkan oleh AI" class="rounded-lg shadow-md w-full">
+                    <a id="downloadImageBtn" href="#" download="pratinjau-ai.png" class="btn btn-primary mt-3 w-full">
+                       <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>
+                        Unduh Gambar
+                    </a>
+                </div>
+             </div>
+        </div>
+    </div>
+
+    <div id="copyNotification" class="hidden"></div>
+
+    <script>
+        // --- Data Structures for Tabs ---
+        const tabData = {
+            'tab1': { subjectModifiers: [], radioGroupStates: {}, subjectText: '', otherModifiers: {} },
+            'tab2': { subjectModifiers: [], radioGroupStates: {}, subjectText: '', otherModifiers: {} },
+            'tab3': { subjectModifiers: [], radioGroupStates: {}, subjectText: '', otherModifiers: {} }
+        };
+        let activeTabId = 'tab1';
+
+        // --- Helper function to generate tab content ---
+        function generateTabContent(tabId, tabLabel) {
+            return `
+                <div class="input-group">
+                    <label for="subject_${tabId}" class="group-label">${tabLabel}</label>
+                    <textarea id="subject_${tabId}" name="subject_${tabId}" rows="5" placeholder="Mis: seorang Pria dewasa, sedang berlari..." class="w-full p-3 border border-gray-300 rounded-lg subject-textarea"></textarea>
+                </div>
+
+                <div class="detail-section-wrapper"> <h3 class="section-title">Deskripsi Detail Subjek (Opsional)</h3>
+                    
+                    <div class="input-group">
+                        <label class="group-label !text-base !font-semibold">Pendekatan Deskripsi</label>
+                        <div class="flex flex-wrap gap-4" style="margin-bottom: 1.5rem;">
+                            <div> <input type="radio" id="choice_karakter_umum_${tabId}" name="subjek_deskripsi_choice_${tabId}" value="karakter_umum" class="subjek-deskripsi-choice-radio"> <label for="choice_karakter_umum_${tabId}" class="option-label">Karakter Umum</label> </div>
+                            <div> <input type="radio" id="choice_kelamin_spesifik_${tabId}" name="subjek_deskripsi_choice_${tabId}" value="kelamin_spesifik" class="subjek-deskripsi-choice-radio" checked> <label for="choice_kelamin_spesifik_${tabId}" class="option-label">Kelamin Spesifik & Usia</label> </div>
+                        </div>
+                    </div>
+
+                    <div id="section_karakter_umum_${tabId}" class="hidden">
+                        <div class="input-group"> <label for="karakterUmum_selector_${tabId}" class="group-label !text-base !mb-2">Karakter Umum</label> <select id="karakterUmum_selector_${tabId}" name="karakterUmum_selector_${tabId}" class="subject-modifier-item-select w-full"></select> </div>
+                    </div>
+
+                    <div id="section_kelamin_spesifik_${tabId}">
+                        <div class="input-group"> <label class="group-label !text-base !mb-2">Kelamin</label> <div id="kelaminOptionsContainer_${tabId}" class="flex flex-wrap gap-4"></div> </div>
+                        <div class="input-group hidden" id="femaleSpecificDescriptorsContainer_${tabId}"> <label class="group-label !text-base !mb-2">Ciri Khas Wanita</label> <div id="femaleTraitsOptionsContainer_${tabId}" class="options-grid"></div> </div>
+                        <div class="input-group"> 
+                            <label for="usia_selector_${tabId}" class="group-label !text-base !mb-2">Usia</label> 
+                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <select id="usia_selector_${tabId}" name="usia_selector_${tabId}" class="subject-modifier-item-select w-full"></select>
+                                <input type="text" id="usia_kustom_${tabId}" name="usia_kustom_${tabId}" placeholder="Usia spesifik (mis: 21)" class="subject-modifier-custom">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid-container-for-dropdowns">
+                        <div> <label for="panjangRambut_selector_${tabId}" class="group-label !text-base !mb-2">Panjang Rambut</label> <select id="panjangRambut_selector_${tabId}" name="panjangRambut_selector_${tabId}" class="subject-modifier-item-select w-full"></select> </div>
+                        <div> <label for="jenisRambut_selector_${tabId}" class="group-label !text-base !mb-2">Jenis Rambut</label> <select id="jenisRambut_selector_${tabId}" name="jenisRambut_selector_${tabId}" class="subject-modifier-item-select w-full"></select> </div>
+                        <div> <label for="gayaPotongan_selector_${tabId}" class="group-label !text-base !mb-2">Gaya Potongan Rambut</label> <select id="gayaPotongan_selector_${tabId}" name="gayaPotongan_selector_${tabId}" class="subject-modifier-item-select w-full"></select> </div>
+                        <div> <label for="penataanRambut_selector_${tabId}" class="group-label !text-base !mb-2">Penataan Rambut</label> <select id="penataanRambut_selector_${tabId}" name="penataanRambut_selector_${tabId}" class="subject-modifier-item-select w-full"></select> </div>
+                        <div> <label for="rambutColor_selector_${tabId}" class="group-label !text-base !mb-2">Warna Rambut</label> <select id="rambutColor_selector_${tabId}" name="rambutColor_selector_${tabId}" class="subject-modifier-item-select w-full"></select> </div>
+                        <div> <label for="makeup_selector_${tabId}" class="group-label !text-base !mb-2">Makeup</label> <select id="makeup_selector_${tabId}" name="makeup_selector_${tabId}" class="subject-modifier-item-select w-full"></select> </div>
+                        <div> <label for="bentukWajah_selector_${tabId}" class="group-label !text-base !mb-2">Bentuk Wajah</label> <select id="bentukWajah_selector_${tabId}" name="bentukWajah_selector_${tabId}" class="subject-modifier-item-select w-full"></select> </div>
+                        <div> <label for="bentukHidung_selector_${tabId}" class="group-label !text-base !mb-2">Bentuk Hidung</label> <select id="bentukHidung_selector_${tabId}" name="bentukHidung_selector_${tabId}" class="subject-modifier-item-select w-full"></select> </div>
+                        <div> <label for="bentukBibir_selector_${tabId}" class="group-label !text-base !mb-2">Bentuk Bibir</label> <select id="bentukBibir_selector_${tabId}" name="bentukBibir_selector_${tabId}" class="subject-modifier-item-select w-full"></select> </div>
+                        <div> <label for="warnaMata_selector_${tabId}" class="group-label !text-base !mb-2">Warna Mata</label> <select id="warnaMata_selector_${tabId}" name="warnaMata_selector_${tabId}" class="subject-modifier-item-select w-full"></select> </div>
+                        <div> <label for="warnaKulit_selector_${tabId}" class="group-label !text-base !mb-2">Warna Kulit</label> <select id="warnaKulit_selector_${tabId}" name="warnaKulit_selector_${tabId}" class="subject-modifier-item-select w-full"></select> </div>
+                        <div> <label for="etnis_selector_${tabId}" class="group-label !text-base !mb-2">Etnis/Ras</label> <select id="etnis_selector_${tabId}" name="etnis_selector_${tabId}" class="subject-modifier-item-select w-full"></select> </div>
+                        <div> <label for="postur_selector_${tabId}" class="group-label !text-base !mb-2">Postur</label> <select id="postur_selector_${tabId}" name="postur_selector_${tabId}" class="subject-modifier-item-select w-full"></select> </div>
+                        <div class="md:col-span-2"> 
+                            <label for="fisik_selector_${tabId}" class="group-label !text-base !mb-2">Ciri Fisik</label> 
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <select id="fisik_selector_${tabId}" name="fisik_selector_${tabId}" class="subject-modifier-item-select w-full"></select>
+                                <input type="text" id="fisik_kustom_${tabId}" name="fisik_kustom_${tabId}" placeholder="Ciri fisik lainnya..." class="subject-modifier-custom">
+                            </div>
+                        </div>
+                        <div> <label for="arahPandang_selector_${tabId}" class="group-label !text-base !mb-2">Arah Pandangan</label> <select id="arahPandang_selector_${tabId}" name="arahPandang_selector_${tabId}" class="subject-modifier-item-select w-full"></select> </div>
+                        <div> <label for="pekerjaan_selector_${tabId}" class="group-label !text-base !mb-2">Pekerjaan</label> <select id="pekerjaan_selector_${tabId}" name="pekerjaan_selector_${tabId}" class="subject-modifier-item-select w-full"></select> </div>
+                        
+                        <div> 
+                             <label for="pakaianAtasan_selector_${tabId}" class="group-label !text-base !mb-2">Pakaian Atasan</label> 
+                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <select id="pakaianAtasan_selector_${tabId}" name="pakaianAtasan_selector_${tabId}" class="subject-modifier-item-select w-full"></select>
+                                <input type="text" id="pakaianAtasan_kustom_${tabId}" name="pakaianAtasan_kustom_${tabId}" placeholder="Bisa di isi warna/lainnya" class="subject-modifier-custom">
+                            </div>
+                        </div>
+                        <div> 
+                             <label for="pakaianBawahan_selector_${tabId}" class="group-label !text-base !mb-2">Pakaian Bawahan</label> 
+                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <select id="pakaianBawahan_selector_${tabId}" name="pakaianBawahan_selector_${tabId}" class="subject-modifier-item-select w-full"></select>
+                                <input type="text" id="pakaianBawahan_kustom_${tabId}" name="pakaianBawahan_kustom_${tabId}" placeholder="Bisa di isi warna/lainnya" class="subject-modifier-custom">
+                            </div>
+                        </div>
+                        <div> 
+                             <label for="pakaianTerusan_selector_${tabId}" class="group-label !text-base !mb-2">Pakaian Terusan</label> 
+                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <select id="pakaianTerusan_selector_${tabId}" name="pakaianTerusan_selector_${tabId}" class="subject-modifier-item-select w-full"></select>
+                                <input type="text" id="pakaianTerusan_kustom_${tabId}" name="pakaianTerusan_kustom_${tabId}" placeholder="Bisa di isi warna/lainnya" class="subject-modifier-custom">
+                            </div>
+                        </div>
+                        <div> 
+                             <label for="pakaianSeragam_selector_${tabId}" class="group-label !text-base !mb-2">Pakaian Seragam</label> 
+                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <select id="pakaianSeragam_selector_${tabId}" name="pakaianSeragam_selector_${tabId}" class="subject-modifier-item-select w-full"></select>
+                                <input type="text" id="pakaianSeragam_kustom_${tabId}" name="pakaianSeragam_kustom_${tabId}" placeholder="dengan tulisan di dada namamu" class="subject-modifier-custom">
+                            </div>
+                        </div>
+                         <div> <label for="hijab_selector_${tabId}" class="group-label !text-base !mb-2">Hijab</label> <select id="hijab_selector_${tabId}" name="hijab_selector_${tabId}" class="subject-modifier-item-select w-full"></select> </div>
+                    </div>
+                    <div class="input-group mt-5">
+                         <label class="group-label !text-base !mb-2">Aksesoris</label>
+                         <div id="asesorisOptionsContainer_${tabId}" class="options-grid"></div>
+                    </div>
+                </div> 
+                
+                <div class="input-group">
+                    <label class="group-label">Aksi & Ekspresi</label>
+                    <div class="detail-section-wrapper !p-0 !bg-transparent !border-none">
+                        <div class="grid-container-for-dropdowns">
+                           <div> <label for="pose_selector_${tabId}" class="group-label !text-base !font-semibold !mb-2">Pose Karakter</label> <select id="pose_selector_${tabId}" name="pose_selector_${tabId}" class="subject-modifier-item-select w-full"></select> </div>
+                           <div> <label for="aksiUmum_selector_${tabId}" class="group-label !text-base !font-semibold !mb-2">Aksi Umum</label> <select id="aksiUmum_selector_${tabId}" name="aksiUmum_selector_${tabId}" class="subject-modifier-item-select w-full"></select> </div>
+                           <div> <label for="ekspresi_selector_${tabId}" class="group-label !text-base !font-semibold !mb-2">Ekspresi</label> <select id="ekspresi_selector_${tabId}" name="ekspresi_selector_${tabId}" class="subject-modifier-item-select w-full"></select> </div>
+                        </div>
+                        <div class="sub-input-group">
+                            <label for="action_custom_${tabId}" class="text-sm font-medium text-gray-700">Aksi Kustom:</label>
+                            <input type="text" id="action_custom_${tabId}" name="action_custom_${tabId}" placeholder="Mis: melukis pemandangan" class="mt-1 subject-modifier-custom">
+                        </div>
+                         <div class="sub-input-group">
+                            <label for="expression_custom_${tabId}" class="text-sm font-medium text-gray-700">Ekspresi Kustom:</label>
+                            <input type="text" id="expression_custom_${tabId}" name="expression_custom_${tabId}" placeholder="Mis: terkejut dengan mata terbelalak" class="mt-1 subject-modifier-custom">
+                        </div>
+                        <div class="sub-input-group">
+                             <label for="spokenWords_${tabId}" class="text-sm font-medium text-gray-700">Kalimat yang Diucapkan:</label>
+                             <input type="text" id="spokenWords_${tabId}" name="spokenWords_${tabId}" placeholder="Mis: 'Aku akan menemukanmu!'" class="mt-1 subject-modifier-custom">
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // --- Core Logic Functions (Tab-Aware & Translation-Aware) ---
+        function updateSubjectDisplayForTab(tabId) {
+            const subjectTextarea = document.getElementById(`subject_${tabId}`);
+            if (subjectTextarea) {
+                let combinedText = tabData[tabId].subjectModifiers
+                    .map(item => item.indo)
+                    .filter(text => text && text.trim() !== "")
+                    .join(', ');
+                
+                tabData[tabId].subjectText = combinedText.replace(/,$/, '').replace(/,\s*,/g, ',');
+                subjectTextarea.value = tabData[tabId].subjectText;
+            }
+        }
+        
+        function naturalJoinIndo(array) {
+            if (!array || array.length === 0) return '';
+            if (array.length === 1) return array[0];
+            if (array.length === 2) return array.join(' dan ');
+            return array.slice(0, -1).join(' ') + ' dan ' + array.slice(-1);
+        }
+
+        function rebuildSubjectModifiersForTab(tabId) {
+            const orderedModifiers = []; 
+            const getModifierObject = (indo, eng) => ({ indo, eng });
+
+            const getSelectModifier = (selectorId, prefixIndo = "", prefixEng = "") => {
+                const select = document.getElementById(selectorId);
+                const kustomInput = document.getElementById(selectorId.replace('_selector', '_kustom'));
+                
+                if (select && select.value) {
+                    const selectedOpt = select.options[select.selectedIndex];
+                    let indoText = prefixIndo + selectedOpt.value;
+                    let engText = prefixEng ? `${prefixEng}${selectedOpt.dataset.eng}` : selectedOpt.dataset.eng;
+
+                    if (selectorId.includes('pakaianSeragam')) {
+                        indoText = selectedOpt.value; 
+                    }
+
+                    if(kustomInput && kustomInput.value.trim()){
+                         const kustomText = kustomInput.value.trim();
+                         indoText += ` ${kustomText}`;
+                         engText += ` ${kustomText}`;
+                    }
+
+                    orderedModifiers.push(getModifierObject(indoText, engText));
+                }
+            };
+            
+            const getCheckboxModifiers = (containerId, prefixIndo = "", prefixEng = "") => {
+                const selected = [];
+                document.querySelectorAll(`#${containerId} input[type="checkbox"]:checked`).forEach(cb => {
+                   selected.push({indo: prefixIndo + cb.value, eng: prefixEng + cb.dataset.eng});
+                });
+                if (selected.length > 0) {
+                    orderedModifiers.push({
+                        indo: selected.map(s => s.indo).join(' '),
+                        eng: selected.map(s => s.eng).join(', ')
+                    });
+                }
+            };
+
+            const deskripsiChoice = document.querySelector(`input[name="subjek_deskripsi_choice_${tabId}"]:checked`)?.value;
+
+            if (deskripsiChoice === 'karakter_umum') {
+                getSelectModifier(`karakterUmum_selector_${tabId}`);
+            } else { // kelamin_spesifik
+                const selectedKelaminRadio = document.querySelector(`input[name="kelamin_selector_${tabId}"]:checked`);
+                const selectedTraitsIndo = [];
+                const selectedTraitsEng = [];
+
+                document.querySelectorAll(`#femaleTraitsOptionsContainer_${tabId} input:checked`).forEach(cb => {
+                    selectedTraitsIndo.push(cb.value);
+                    selectedTraitsEng.push(cb.dataset.eng);
+                });
+
+                if(selectedKelaminRadio){
+                    let combinedIndo = selectedKelaminRadio.value;
+                    let combinedEng = selectedKelaminRadio.dataset.eng;
+
+                    if (selectedTraitsIndo.length > 0) {
+                        const traitStringIndo = naturalJoinIndo(selectedTraitsIndo);
+                        combinedIndo += ` ${traitStringIndo}`;
+                        combinedEng = `${selectedTraitsEng.join(' ')} ${combinedEng}`;
+                    }
+                    orderedModifiers.push(getModifierObject(combinedIndo, combinedEng));
+                }
+                
+                // Handle Age (Dropdown + Custom)
+                const usiaSelect = document.getElementById(`usia_selector_${tabId}`);
+                const usiaKustomInput = document.getElementById(`usia_kustom_${tabId}`);
+                let ageIndo = "";
+                let ageEng = "";
+                if (usiaSelect && usiaSelect.value) {
+                    const noPrefix = ["Bayi", "Anak Kecil"];
+                    ageIndo = noPrefix.includes(usiaSelect.value) ? usiaSelect.value : "Usia " + usiaSelect.value;
+                    ageEng = usiaSelect.options[usiaSelect.selectedIndex].dataset.eng;
+                }
+                if (usiaKustomInput && usiaKustomInput.value.trim()) {
+                    const customAge = usiaKustomInput.value.trim();
+                    ageIndo = ageIndo ? `${ageIndo} ${customAge} Tahun` : `${customAge} Tahun`;
+                    ageEng = ageEng ? `${ageEng}, ${customAge} years old` : `${customAge} years old`;
+                }
+                if (ageIndo) {
+                    orderedModifiers.push(getModifierObject(ageIndo, ageEng));
+                }
+            }
+            
+            // --- Hair Block ---
+            const hairPartsIndo = [];
+            const hairPartsEng = [];
+            const addHairPart = (selectorId) => {
+                 const select = document.getElementById(selectorId);
+                if (select && select.value && !select.disabled) {
+                    const selectedOpt = select.options[select.selectedIndex];
+                    hairPartsIndo.push(selectedOpt.value);
+                    hairPartsEng.push(selectedOpt.dataset.eng);
+                }
+            };
+            const panjangRambutSelect = document.getElementById(`panjangRambut_selector_${tabId}`);
+            if(panjangRambutSelect && panjangRambutSelect.value) {
+                const selectedVal = panjangRambutSelect.value;
+                if(selectedVal.includes("Botak")) {
+                    orderedModifiers.push(getModifierObject("berkepala " + selectedVal.toLowerCase(), "with a " + panjangRambutSelect.options[panjangRambutSelect.selectedIndex].dataset.eng + " head"));
+                } else {
+                    hairPartsIndo.push(panjangRambutSelect.value);
+                    hairPartsEng.push(panjangRambutSelect.options[panjangRambutSelect.selectedIndex].dataset.eng);
+                }
+            }
+
+            addHairPart(`jenisRambut_selector_${tabId}`);
+            addHairPart(`gayaPotongan_selector_${tabId}`);
+            addHairPart(`penataanRambut_selector_${tabId}`);
+            addHairPart(`rambutColor_selector_${tabId}`);
+
+            if(hairPartsIndo.length > 0) {
+                 orderedModifiers.push(getModifierObject("Memiliki Rambut " + hairPartsIndo.join(" "), "with " + hairPartsEng.join(" ") + " hair"));
+            }
+
+            // --- Other Attributes ---
+            getSelectModifier(`makeup_selector_${tabId}`, "memakai riasan ", "wearing ");
+            getSelectModifier(`bentukWajah_selector_${tabId}`, "dengan wajah ", "with ");
+            getSelectModifier(`bentukHidung_selector_${tabId}`, "dengan hidung ", "with ");
+            getSelectModifier(`bentukBibir_selector_${tabId}`, "dengan bibir ", "with ");
+            getSelectModifier(`warnaMata_selector_${tabId}`, "dan mata berwarna ", "and ");
+            getSelectModifier(`warnaKulit_selector_${tabId}`, "berkulit ", "with ");
+            
+            getSelectModifier(`etnis_selector_${tabId}`, "Berwajah ", "");
+            
+            const posturFisikIndo = [];
+            const posturFisikEng = [];
+            const posturSelect = document.getElementById(`postur_selector_${tabId}`);
+            if(posturSelect && posturSelect.value) {
+                posturFisikIndo.push(posturSelect.value);
+                posturFisikEng.push(posturSelect.options[posturSelect.selectedIndex].dataset.eng);
+            }
+            const fisikSelect = document.getElementById(`fisik_selector_${tabId}`);
+            if(fisikSelect && fisikSelect.value) {
+                posturFisikIndo.push(fisikSelect.value);
+                posturFisikEng.push(fisikSelect.options[fisikSelect.selectedIndex].dataset.eng);
+            }
+            if(posturFisikIndo.length > 0) {
+                 orderedModifiers.push(getModifierObject(posturFisikIndo.join(" dan "), posturFisikEng.join(" and ")));
+            }
+            const customFisik = document.getElementById(`fisik_kustom_${tabId}`)?.value.trim();
+            if (customFisik) {
+                orderedModifiers.push(getModifierObject(customFisik, customFisik));
+            }
+
+            getSelectModifier(`arahPandang_selector_${tabId}`);
+            getSelectModifier(`pekerjaan_selector_${tabId}`, "seorang ", "a ");
+            getSelectModifier(`pakaianAtasan_selector_${tabId}`, "mengenakan ", "wearing ");
+            getSelectModifier(`pakaianBawahan_selector_${tabId}`, "dan ", "and ");
+            getSelectModifier(`pakaianTerusan_selector_${tabId}`, "mengenakan ", "wearing ");
+            getSelectModifier(`pakaianSeragam_selector_${tabId}`, "mengenakan ", "wearing ");
+            getSelectModifier(`hijab_selector_${tabId}`, "memakai ", "wearing ");
+            getCheckboxModifiers(`asesorisOptionsContainer_${tabId}`, "memakai ", "wearing ");
+
+            getSelectModifier(`pose_selector_${tabId}`);
+            getSelectModifier(`aksiUmum_selector_${tabId}`);
+            getSelectModifier(`ekspresi_selector_${tabId}`, "berekspresi ", "");
+
+            // Custom fields and Spoken Words
+            const customAction = document.getElementById(`action_custom_${tabId}`)?.value.trim();
+            if (customAction) orderedModifiers.push(getModifierObject(customAction, customAction));
+
+            const spokenWordsValue = document.getElementById(`spokenWords_${tabId}`)?.value.trim();
+            if (spokenWordsValue) {
+                const selectedKelaminRadio = document.querySelector(`input[name="kelamin_selector_${tabId}"]:checked`);
+                let genderPrefixEng = "they say";
+                if (selectedKelaminRadio) {
+                    if (selectedKelaminRadio.value === 'Pria') { genderPrefixEng = 'he says'; }
+                    else if (selectedKelaminRadio.value === 'Wanita' || selectedKelaminRadio.value === 'Gadis') { genderPrefixEng = 'she says'; }
+                }
+                orderedModifiers.push(getModifierObject(`ia mengatakan "${spokenWordsValue}"`, `${genderPrefixEng}, "${spokenWordsValue}"`));
+            }
+
+            const customExpression = document.getElementById(`expression_custom_${tabId}`)?.value.trim();
+            if (customExpression) orderedModifiers.push(getModifierObject(customExpression, customExpression));
+
+
+            tabData[tabId].subjectModifiers = orderedModifiers;
+            updateSubjectDisplayForTab(tabId);
+        }
+        
+        function manageSubjectInteraction(tabId, inputElement) {
+            if(inputElement.id.includes('pekerjaan_selector')){
+                handlePekerjaanPakaianInteraction(tabId);
+            }
+            if(inputElement.id.includes('panjangRambut_selector')) {
+                handleBaldSelection(tabId);
+            }
+            if(inputElement.name === `kelamin_selector_${tabId}`){
+                const isFemale = inputElement.value === 'Wanita' || inputElement.value === 'Gadis';
+                toggleFemaleSpecificOptionsForTab(tabId, isFemale && inputElement.checked);
+            }
+            rebuildSubjectModifiersForTab(tabId);
+        }
+
+        function handleBaldSelection(tabId) {
+            const panjangRambutSelect = document.getElementById(`panjangRambut_selector_${tabId}`);
+            const isBald = panjangRambutSelect.value.includes("Botak");
+
+            const selectorsToDisable = [
+                `jenisRambut_selector_${tabId}`,
+                `gayaPotongan_selector_${tabId}`,
+                `penataanRambut_selector_${tabId}`,
+                `rambutColor_selector_${tabId}`
+            ];
+
+            selectorsToDisable.forEach(selectorId => {
+                const select = document.getElementById(selectorId);
+                if(select) {
+                    select.disabled = isBald;
+                    if(isBald) {
+                        select.value = "";
+                    }
+                }
+            });
+        }
+
+        function handlePekerjaanPakaianInteraction(tabId) {
+            const pakaianSelectors = [
+                document.getElementById(`pakaianAtasan_selector_${tabId}`),
+                document.getElementById(`pakaianBawahan_selector_${tabId}`),
+                document.getElementById(`pakaianTerusan_selector_${tabId}`),
+                document.getElementById(`pakaianSeragam_selector_${tabId}`)
+            ];
+            const pekerjaanSelector = document.getElementById(`pekerjaan_selector_${tabId}`);
+            if(!pakaianSelectors.every(s => s) || !pekerjaanSelector) return;
+            
+            const selectedPekerjaanValue = pekerjaanSelector.value;
+            const jobOpt = pekerjaanOptionsOriginal.find(opt => opt.value === selectedPekerjaanValue);
+            const isDisabled = jobOpt && jobOpt.disablesClothing;
+
+            pakaianSelectors.forEach(selector => {
+                selector.disabled = isDisabled;
+                if(isDisabled) {
+                    selector.value = "";
+                }
+            });
+        }
+        
+        function toggleFemaleSpecificOptionsForTab(tabId, show) { 
+            const femaleContainer = document.getElementById(`femaleSpecificDescriptorsContainer_${tabId}`);
+            femaleContainer.classList.toggle('hidden', !show);
+            if(!show) {
+                femaleContainer.querySelectorAll('input:checked').forEach(cb => cb.checked = false);
+            }
+        }
+
+        function populateSelect(selectId, optionsArray) {
+            const select = document.getElementById(selectId);
+            if (!select) return;
+            select.innerHTML = `<option value="" data-eng="">-- Pilih --</option>`;
+            
+            if (selectId.includes('pose_selector')) { // Special handling for grouped options
+                const groups = {};
+                optionsArray.forEach(item => {
+                    if (!groups[item.group]) {
+                        groups[item.group] = [];
+                    }
+                    groups[item.group].push(item);
+                });
+
+                for (const groupName in groups) {
+                    const optgroup = document.createElement('optgroup');
+                    optgroup.label = groupName;
+                    groups[groupName].forEach(item => {
+                         const option = document.createElement('option');
+                         option.value = item.value;
+                         option.textContent = item.displayName || item.value;
+                         option.dataset.eng = item.eng;
+                         optgroup.appendChild(option);
+                    });
+                    select.appendChild(optgroup);
+                }
+            } else { // Standard population
+                optionsArray.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item.value;
+                    option.textContent = item.displayName || item.value;
+                    option.dataset.eng = item.eng;
+                     if (item.description) {
+                        option.textContent += ` (${item.description})`;
+                    }
+                    select.appendChild(option);
+                });
+            }
+        }
+        
+        function populateOptions(containerId, optionsArray, config) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            const { inputType = 'checkbox', groupName, tabId } = config;
+
+            const optionsHtml = optionsArray.map(item => {
+                const itemId = `${item.id}_${tabId}`;
+                const nameAttribute = inputType === 'radio' ? `name="${groupName}"` : '';
+                return `<div class="flex items-center">
+                    <input type="${inputType}" id="${itemId}" ${nameAttribute} value="${item.value}" data-eng="${item.eng}" class="subject-modifier-item">
+                    <label for="${itemId}" class="option-label">${item.displayName || item.value}</label>
+                </div>`;
+            }).join('');
+            container.innerHTML = optionsHtml;
+        }
+
+
+        function initializeSubjectModifierListenersForTab(tabId) {
+            const tabElement = document.getElementById(tabId);
+            if (!tabElement) return;
+
+            tabElement.querySelectorAll('.subjek-deskripsi-choice-radio').forEach(radio => {
+                radio.addEventListener('change', () => {
+                    const choice = radio.value;
+                    document.getElementById(`section_karakter_umum_${tabId}`).classList.toggle('hidden', choice !== 'karakter_umum');
+                    document.getElementById(`section_kelamin_spesifik_${tabId}`).classList.toggle('hidden', choice === 'karakter_umum');
+                    rebuildSubjectModifiersForTab(tabId);
+                });
+            });
+
+            tabElement.querySelectorAll('.subject-modifier-item-select, .subject-modifier-item, .subject-modifier-custom').forEach(input => {
+                const eventType = input.tagName === 'SELECT' ? 'change' : (input.type === 'radio' || input.type === 'checkbox' ? 'change' : 'input');
+                input.addEventListener(eventType, () => manageSubjectInteraction(tabId, input));
+            });
+        }
+        
+        // --- Data Definitions with English translations ---
+        const karakterUmumUsiaOptions = [ { id: 'karakter_anak_anak', value: 'Anak-Anak', eng: 'Children' }, { id: 'karakter_bocah', value: 'Bocah', eng: 'A young child' }, { id: 'karakter_anak_bujang', value: 'Anak Bujang', eng: 'A lad' }, { id: 'karakter_remaja_putri', value: 'Remaja Putri', eng: 'A teenage girl' }, { id: 'karakter_ibu_muda', value: 'Ibu Muda', eng: 'A young mother' }, { id: 'karakter_ibu_ibu', value: 'Ibu-Ibu', eng: 'Mothers' }, { id: 'karakter_tante', value: 'Tante', eng: 'An aunt' }, { id: 'karakter_om_om', value: 'Om-om', eng: 'Uncles' }, { id: 'karakter_bapak_bapak', value: 'Bapak-Bapak', eng: 'Fathers' }, { id: 'karakter_nenek_nenek', value: 'Nenek-Nenek', eng: 'Grandmothers' }, { id: 'karakter_nenek_centil', value: 'Nenek Centil', eng: 'A flirty grandmother' }, { id: 'karakter_nenek_genit', value: 'Nenek Genit', eng: 'A coy grandmother' }, { id: 'karakter_kakek_kakek', value: 'Kakek-Kakek', eng: 'Grandfathers' }, { id: 'karakter_kucing', value: 'Kucing', eng: 'A cat' }, { id: 'karakter_anjing', value: 'Anjing', eng: 'A dog' }, { id: 'karakter_tikus', value: 'Tikus', eng: 'A mouse' }, { id: 'karakter_burung', value: 'Burung', eng: 'A bird' }, { id: 'karakter_naga', value: 'Naga', eng: 'A dragon' }, { id: 'karakter_robot', value: 'Robot', eng: 'A robot' }, { id: 'karakter_alien', value: 'Alien', eng: 'An alien' }, { id: 'karakter_monster', value: 'Monster', eng: 'A monster' }, { id: 'karakter_hantu', value: 'Hantu', eng: 'A ghost' }, { id: 'karakter_sekelompok', value: 'Sekelompok orang', eng: 'A group of people' }, { id: 'karakter_kerumunan', value: 'Kerumunan orang', eng: 'A crowd of people' }, { id: 'karakter_pasangan', value: 'Pasangan', eng: 'A couple' } ];
+        const kelaminOptionsBaseUpdated = [ { id: 'kelamin_pria', value: 'Pria', eng: 'a Man' }, { id: 'kelamin_wanita', value: 'Wanita', eng: 'a Woman' }, { id: 'kelamin_gadis', value: 'Gadis', eng: 'a Girl' } ];
+        const femaleTraitsOptions = [ { id: 'trait_cantik', value: 'Cantik', eng: 'beautiful' }, { id: 'trait_imut', value: 'Imut', eng: 'cute' }, { id: 'trait_sederhana', value: 'Sederhana', eng: 'simple' }, { id: 'trait_anggun', value: 'Anggun', eng: 'graceful' } ];
+        const usiaOptions = [ { id: 'usia_bayi', value: 'Bayi', eng: 'baby' }, { id: 'usia_anak_kecil', value: 'Anak Kecil', eng: 'young child' }, { id: 'usia_remaja', value: 'Remaja', eng: 'teenager' }, { id: 'usia_dewasa_muda', value: 'Dewasa Muda', eng: 'young adult' }, { id: 'usia_dewasa', value: 'Dewasa', eng: 'adult' }, { id: 'usia_tua', value: 'Tua', eng: 'elderly' } ];
+        const panjangRambutOptions = [ { id: 'rambut_panjang', value: 'Panjang', eng: 'long' }, { id: 'rambut_pendek', value: 'Pendek', eng: 'short' }, { id: 'rambut_sedang', value: 'Sedang', eng: 'medium-length' }, { id: 'rambut_sebahu', value: 'Sebahu', eng: 'shoulder-length' }, { id: 'rambut_sepinggang', value: 'Sepinggang', eng: 'waist-length' }, { id: 'rambut_botak', value: 'Botak', eng: 'bald' }, { id: 'rambut_botak_licin', value: 'Botak Licin', eng: 'clean-shaven bald' }];
+        const jenisRambutOptions = [{ id: 'rambut_lurus', value: 'Lurus', eng: 'straight' }, { id: 'rambut_ikal', value: 'Ikal', eng: 'wavy' }, { id: 'rambut_bergelombang', value: 'Bergelombang', eng: 'curly' }, { id: 'rambut_keriting', value: 'Keriting', eng: 'coily' }];
+        const gayaPotonganOptions = [{ id: 'rambut_terurai', value: 'Terurai', eng: 'loose' }, { id: 'rambut_cepak', value: 'Cepak', eng: 'buzz cut' }, { id: 'rambut_cepak_tentara', value: 'Cepak Tentara', eng: 'military buzz cut' }, { id: 'rambut_dikepang', value: 'Dikepang', eng: 'braided' }, { id: 'rambut_dicepol', value: 'Dicepol (Sanggul)', eng: 'in a bun' }, { id: 'rambut_kuncir_kuda', value: 'Kuncir Kuda', eng: 'ponytail' }, { id: 'rambut_belah_tengah', value: 'Belah Tengah', eng: 'center-parted' }, { id: 'rambut_belah_pinggir', value: 'Belah Pinggir', eng: 'side-parted' }, { id: 'rambut_berponi', value: 'Berponi', eng: 'with bangs' }, { id: 'rambut_jabrik', value: 'Jabrik', eng: 'spiky' }, { id: 'rambut_undercut', value: 'Undercut', eng: 'undercut' }, { id: 'rambut_punk', value: 'Punk', eng: 'punk' }, { id: 'rambut_mohawk', value: 'Mohawk', eng: 'mohawk' }];
+        const penataanRambutOptions = [ { id: 'penataan_klimis', value: 'Klimis', eng: 'slicked-back' }, { id: 'penataan_acak', value: 'Acak-acakan', eng: 'messy' }, { id: 'penataan_rapi', value: 'Rapi', eng: 'neat' } ];
+        const rambutColorOptions = [ { id: 'rambut_hitam', value: 'berwarna Hitam', eng: 'black' }, { id: 'rambut_pirang', value: 'berwarna Pirang', eng: 'blonde' }, { id: 'rambut_coklat', value: 'berwarna Coklat', eng: 'brown' }, { id: 'rambut_merah', value: 'berwarna Merah', eng: 'red' }, { id: 'rambut_uban', value: 'Beruban', eng: 'gray' }, { id: 'rambut_putih', value: 'berwarna Putih', eng: 'white' }, { id: 'rambut_biru', value: 'berwarna Biru', eng: 'blue' }, { id: 'rambut_hijau', value: 'berwarna Hijau', eng: 'green' }, { id: 'rambut_merah_muda', value: 'berwarna Merah Muda', eng: 'pink' }, { id: 'rambut_warnawarni', value: 'Berwarna-warni', eng: 'colorful' } ];
+        const makeupOptions = [ { id: 'makeup_natural', value: 'Natural', eng: 'natural makeup' }, { id: 'makeup_bold', value: 'Bold', eng: 'bold makeup' }, { id: 'makeup_smokey', value: 'Smokey Eyes', eng: 'smokey eyes' }, { id: 'makeup_glamour', value: 'Glamor', eng: 'glamour makeup' }, { id: 'makeup_gothic', value: 'Gothic', eng: 'gothic makeup' }, { id: 'makeup_no_makeup', value: 'No-makeup', eng: 'no-makeup look' }, { id: 'makeup_artistik', value: 'Artistik', eng: 'artistic makeup' } ];
+        const bentukWajahOptions = [ { id: 'wajah_oval', value: 'Oval', eng: 'an oval face' }, { id: 'wajah_bulat', value: 'Bulat', eng: 'a round face' }, { id: 'wajah_kotak', value: 'Kotak', eng: 'a square face' }, { id: 'wajah_lonjong', value: 'Lonjong', eng: 'a long face' }, { id: 'wajah_hati', value: 'Hati', eng: 'a heart-shaped face' } ];
+        const bentukHidungOptions = [ { id: 'hidung_mancung', value: 'Mancung', eng: 'a pointed nose' }, { id: 'hidung_pesek', value: 'Pesek', eng: 'a flat nose' }, { id: 'hidung_lebar', value: 'Lebar', eng: 'a wide nose' }, { id: 'hidung_bengkok', value: 'Bengkok', eng: 'an aquiline nose' }, { id: 'hidung_bulat', value: 'Bulat', eng: 'a button nose' }];
+        const bentukBibirOptions = [ { id: 'bibir_tebal', value: 'Tebal', eng: 'full lips' }, { id: 'bibir_tipis', value: 'Tipis', eng: 'thin lips' }, { id: 'bibir_hati', value: 'Berbentuk Hati', eng: 'heart-shaped lips' }, { id: 'bibir_busur', value: 'Seperti Busur', eng: 'bow-shaped lips' }];
+        const warnaMataOptions = [ { id: 'mata_coklat', value: 'Coklat', eng: 'brown eyes' }, { id: 'mata_biru', value: 'Biru', eng: 'blue eyes' }, { id: 'mata_hijau', value: 'Hijau', eng: 'green eyes' }, { id: 'mata_abu', value: 'Abu-abu', eng: 'gray eyes' }, { id: 'mata_hitam', value: 'Hitam', eng: 'black eyes' } ];
+        const warnaKulitOptions = [ { id: 'kulit_putih', value: 'Putih', eng: 'fair skin' }, { id: 'kulit_gelap', value: 'Gelap', eng: 'dark skin' }, { id: 'kulit_sawo_matang', value: 'Sawo Matang', eng: 'tan skin' }, { id: 'kulit_kuning_langsat', value: 'Kuning Langsat', eng: 'light brown skin' }, { id: 'kulit_cokelat_terang', value: 'Cokelat Terang', eng: 'light brown skin' }, { id: 'kulit_cokelat_gelap', value: 'Cokelat Gelap', eng: 'dark brown skin' }, { id: 'kulit_merah_muda_pucat', value: 'Merah Muda / Pucat', eng: 'pinkish/pale skin' }, { id: 'kulit_zaitun_olive', value: 'Zaitun (Olive)', eng: 'olive skin' }, { id: 'kulit_albino', value: 'Albino', eng: 'albino skin' }, { id: 'kulit_tan', value: 'Tan / Kecokelatan karena Matahari', eng: 'sun-tanned skin' } ];
+        const etnisOptions = [ { id: 'etnis_asia', value: 'Asia', eng: 'Asian' }, { id: 'etnis_asia_timur', value: 'Asia Timur (Cina, Jepang, Korea)', eng: 'East Asian' }, { id: 'etnis_asia_tenggara', value: 'Asia Tenggara (Indonesia, Melayu, Thai, Filipina)', eng: 'Southeast Asian' }, { id: 'etnis_sunda', value: 'Sunda', eng: 'Sundanese' }, { id: 'etnis_jawa', value: 'Jawa', eng: 'Javanese' }, { id: 'etnis_bali', value: 'Bali', eng: 'Balinese' }, { id: 'etnis_batak', value: 'Batak', eng: 'Batak' }, { id: 'etnis_dayak', value: 'Dayak', eng: 'Dayak' }, { id: 'etnis_papua', value: 'Papua', eng: 'Papuan' }, { id: 'etnis_asia_selatan', value: 'Asia Selatan (India, Pakistan, Bangladesh)', eng: 'South Asian' }, { id: 'etnis_eropa', value: 'Eropa (Kaukasia)', eng: 'European (Caucasian)' }, { id: 'etnis_afrika', value: 'Afrika', eng: 'African' }, { id: 'etnis_timur_tengah', value: 'Timur Tengah (Arab, Persia)', eng: 'Middle Eastern' }, { id: 'etnis_latin', value: 'Latin / Hispanik', eng: 'Latino / Hispanic' }, { id: 'etnis_pribumi_amerika', value: 'Pribumi Amerika (Native American)', eng: 'Native American' }, { id: 'etnis_australia_aborigin', value: 'Australia Aborigin', eng: 'Australian Aboriginal' }, { id: 'etnis_polinesia_pasifik', value: 'Polinesia / Kepulauan Pasifik', eng: 'Polynesian / Pacific Islander' }, { id: 'etnis_indo_eropa', value: 'campuran Indo-Eropa', eng: 'mixed Indo-European' }, { id: 'etnis_afro_asia', value: 'campuran Afro-Asia', eng: 'mixed Afro-Asian' }, { id: 'etnis_eurasian', value: 'campuran Eurasia (Eropa-Asia)', eng: 'mixed Eurasian' } ];
+        const posturOptions = [ { id: 'postur_tegap', value: 'Tegap', eng: 'upright' }, { id: 'postur_bongkok', value: 'Bongkok', eng: 'stooped' }, { id: 'postur_tinggi', value: 'Tinggi', eng: 'tall' }, { id: 'postur_tinggi_semampai', value: 'Tinggi Semampai', eng: 'tall and slender' }, { id: 'postur_jangkung', value: 'Jangkung', eng: 'lanky' }, { id: 'postur_pendek', value: 'Pendek', eng: 'short' }, { id: 'postur_sedang', value: 'Sedang', eng: 'medium height' }, { id: 'postur_berisi_padat', value: 'Berisi Padat', eng: 'stocky' }, { id: 'postur_ramping', value: 'Ramping', eng: 'slim' } ];
+        const fisikOptions = [ { id: 'fisik_gemuk', value: 'Gemuk', eng: 'fat' }, { id: 'fisik_kurus', value: 'Kurus', eng: 'thin' }, { id: 'fisik_bertubuh_sedang', value: 'Bertubuh Sedang', eng: 'medium build' }, { id: 'fisik_atletis', value: 'Atletis', eng: 'athletic' }, { id: 'fisik_sexy', value: 'Sexy', eng: 'sexy' }, { id: 'fisik_gagah', value: 'Gagah', eng: 'sturdy' }, { id: 'fisik_lemah_lembut', value: 'Lemah Lembut', eng: 'gentle' }, { id: 'fisik_berotot', value: 'Berotot', eng: 'muscular' }, { id: 'fisik_langsing', value: 'Langsing', eng: 'slender' }, { id: 'fisik_montok', value: 'Montok', eng: 'curvy' }, { id: 'fisik_proporsional', value: 'Proporsional', eng: 'proportional' }, { id: 'fisik_pucat', value: 'Pucat', eng: 'pale' }, { id: 'fisik_buncit', value: 'Perut Buncit', eng: 'pot-bellied' } ];
+        const arahPandangOptionsBase = [ { id: 'pandang_viewer', value: 'Menatap Viewer/Kamera', eng: 'looking at the camera' }, { id: 'pandang_bawah', value: 'Menatap ke bawah', eng: 'looking down' }, { id: 'pandang_atas', value: 'Menatap ke atas', eng: 'looking up' }, { id: 'pandang_kanan', value: 'Menatap ke samping kanan', eng: 'looking to the right' }, { id: 'pandang_kiri', value: 'Menatap ke samping kiri', eng: 'looking to the left' }, { id: 'pandang_depan', value: 'Menatap lurus ke depan', eng: 'looking straight ahead' }, { id: 'pandang_kosong', value: 'Pandangan kosong/melamun', eng: 'vacant stare/daydreaming' } ];
+        const pekerjaanOptionsOriginal = [ { id: 'pekerjaan_vlogger', value: 'Vlogger', eng: 'vlogger', disablesClothing: false }, { id: 'pekerjaan_konten_kreator', value: 'Konten Kreator', eng: 'content creator', disablesClothing: false }, { id: 'pekerjaan_reporter', value: 'Reporter', eng: 'reporter', disablesClothing: true }, { id: 'pekerjaan_tentara', value: 'Tentara', eng: 'soldier', disablesClothing: true }, { id: 'pekerjaan_polisi', value: 'Polisi', eng: 'police officer', disablesClothing: true }, { id: 'pekerjaan_satpam', value: 'Satpam', eng: 'security guard', disablesClothing: true }, { id: 'pekerjaan_ojek_online', value: 'Ojek Online', eng: 'online motorcycle taxi driver', disablesClothing: true }, { id: 'pekerjaan_pengemudi_taksi', value: 'Pengemudi Taksi', eng: 'taxi driver', disablesClothing: true }, { id: 'pekerjaan_koki_restoran', value: 'Koki Restoran', eng: 'chef', disablesClothing: true }, { id: 'pekerjaan_pedagang', value: 'Pedagang', eng: 'trader/merchant', disablesClothing: false }, { id: 'pekerjaan_penjual_sayur_gerobak', value: 'Penjual Sayur Gerobak', eng: 'vegetable cart vendor', disablesClothing: false }, { id: 'pekerjaan_penjual_sayur_pasar', value: 'Penjual Sayur Pasar', eng: 'market vegetable seller', disablesClothing: false }, { id: 'pekerjaan_front_office', value: 'Front Office', eng: 'front office staff', disablesClothing: false }, { id: 'pekerjaan_bidan', value: 'Bidan', eng: 'midwife', disablesClothing: true }, { id: 'pekerjaan_suster', value: 'Suster', eng: 'nurse', disablesClothing: true }, { id: 'pekerjaan_dokter', value: 'Dokter', eng: 'doctor', disablesClothing: true }, { id: 'pekerjaan_pelajar', value: 'Pelajar', eng: 'student', disablesClothing: false }, { id: 'pekerjaan_mahasiswa', value: 'Mahasiswa', eng: 'university student (male)', disablesClothing: false }, { id: 'pekerjaan_mahasiswi', value: 'Mahasiswi', eng: 'university student (female)', disablesClothing: false }, { id: 'pekerjaan_ibu_rumah_tangga', value: 'Ibu Rumah Tangga', eng: 'housewife', disablesClothing: false }, { id: 'pekerjaan_guru', value: 'Guru', eng: 'teacher', disablesClothing: false }, { id: 'pekerjaan_dosen', value: 'Dosen', eng: 'lecturer', disablesClothing: false }, { id: 'pekerjaan_petani', value: 'Petani', eng: 'farmer', disablesClothing: false }, { id: 'pekerjaan_nelayan', value: 'Nelayan', eng: 'fisherman', disablesClothing: false }, { id: 'pekerjaan_karyawan_swasta', value: 'Karyawan Swasta', eng: 'private employee', disablesClothing: false }, { id: 'pekerjaan_pns', value: 'Pegawai Negeri Sipil (PNS)', eng: 'civil servant', disablesClothing: true }, { id: 'pekerjaan_wiraswasta', value: 'Wiraswasta', eng: 'entrepreneur', disablesClothing: false }, { id: 'pekerjaan_seniman', value: 'Seniman', eng: 'artist', disablesClothing: false }, { id: 'pekerjaan_atlet', value: 'Atlet', eng: 'athlete', disablesClothing: false }, { id: 'pekerjaan_sopir', value: 'Sopir (Umum)', eng: 'driver', disablesClothing: false }, { id: 'pekerjaan_tukang_bangunan', value: 'Tukang Bangunan', eng: 'construction worker', disablesClothing: false }, { id: 'pekerjaan_montir', value: 'Montir', eng: 'mechanic', disablesClothing: false }, { id: 'pekerjaan_barista', value: 'Barista', eng: 'barista', disablesClothing: true } ];
+        const asesorisOptions = [ { id: 'asesoris_kacamata', value: 'Berkacamata', eng: 'wearing glasses' }, { id: 'asesoris_bertopi', value: 'Bertopi', eng: 'wearing a hat' }, { id: 'asesoris_topi_baseball', value: 'Topi Baseball', eng: 'wearing a baseball cap' }, { id: 'asesoris_topi_fedora', value: 'Topi Fedora', eng: 'wearing a fedora' }, { id: 'asesoris_topi_kupluk', value: 'Topi Kupluk (Beanie)', eng: 'wearing a beanie' }, { id: 'asesoris_topi_ember', value: 'Topi Ember (Bucket Hat)', eng: 'wearing a bucket hat' }, { id: 'asesoris_topi_jerami', value: 'Topi Jerami / Topi Pantai', eng: 'wearing a straw hat' }, { id: 'asesoris_peci', value: 'Peci / Kopiah', eng: 'wearing a peci' }, { id: 'asesoris_baret', value: 'Baret', eng: 'wearing a beret' }, { id: 'asesoris_topi_pet', value: 'Topi Pet (Flat Cap)', eng: 'wearing a flat cap' }, { id: 'asesoris_tindik_hidung', value: 'Bertindik di hidung', eng: 'with a nose piercing' }, { id: 'asesoris_kawat_gigi', value: 'Memakai kawat gigi', eng: 'wearing braces' }, { id: 'asesoris_bando', value: 'Memakai bando', eng: 'wearing a headband' }, { id: 'asesoris_syal', value: 'Memakai syal', eng: 'wearing a scarf' }, { id: 'asesoris_sorban', value: 'Memakai sorban', eng: 'wearing a turban' }, { id: 'asesoris_jam_tangan', value: 'Memakai jam tangan', eng: 'wearing a watch' }, { id: 'asesoris_kalung', value: 'Memakai kalung', eng: 'wearing a necklace' }, { id: 'asesoris_gelang', value: 'Memakai gelang', eng: 'wearing a bracelet' }, { id: 'asesoris_anting', value: 'Memakai anting', eng: 'wearing earrings' }, { id: 'asesoris_tas_ransel', value: 'Tas Ransel', eng: 'carrying a backpack' }, { id: 'asesoris_tas_selempang', value: 'Tas Selempang', eng: 'carrying a sling bag' }, { id: 'asesoris_tas_jinjing', value: 'Tas Jinjing', eng: 'carrying a tote bag' }, { id: 'asesoris_masker', value: 'Memakai masker', eng: 'wearing a mask' }, { id: 'asesoris_ikat_pinggang', value: 'Memakai ikat pinggang', eng: 'wearing a belt' }, { id: 'asesoris_dasi', value: 'Memakai dasi', eng: 'wearing a tie' }, { id: 'asesoris_rompi', value: 'Rompi', eng: 'vest' }];
+        const hijabOptions = [ { id: 'asesoris_hijab', value: 'Hijab', eng: 'hijab' }, { id: 'asesoris_hijab_syari', value: 'Hijab Syar\'i', eng: 'Syar\'i hijab' }, { id: 'asesoris_hijab_pashmina', value: 'Hijab Pashmina', eng: 'pashmina hijab' }, { id: 'asesoris_hijab_segiempat', value: 'Hijab Segi Empat', eng: 'square hijab' }, { id: 'asesoris_hijab_bergo', value: 'Hijab Bergo', eng: 'bergo hijab' }, { id: 'asesoris_hijab_turban', value: 'Hijab Gaya Turban', eng: 'turban style hijab' }, { id: 'asesoris_ciput', value: 'Ciput / Inner Hijab', eng: 'ciput / inner hijab' }, { id: 'asesoris_niqab', value: 'Niqab / Cadar', eng: 'niqab / face veil' } ];
+        const pakaianAtasanOptions = [ { id: 'pakaian_atasan_kaos', value: 'Kaos', eng: 't-shirt' }, { id: 'pakaian_atasan_vneck', value: 'Kaos V-Neck', eng: 'V-neck t-shirt' }, { id: 'pakaian_atasan_oversized', value: 'Kaos Kebesaran', eng: 'oversized t-shirt' }, { id: 'pakaian_atasan_kemeja', value: 'Kemeja', eng: 'shirt' }, { id: 'pakaian_atasan_tanktop', value: 'Tanktop', eng: 'tank top' }, { id: 'pakaian_atasan_blus', value: 'Blus', eng: 'blouse' }, { id: 'pakaian_atasan_hoodie', value: 'Hoodie', eng: 'hoodie' }, { id: 'pakaian_atasan_sweater', value: 'Sweater', eng: 'sweater' }, { id: 'pakaian_atasan_jaket', value: 'Jaket', eng: 'jacket' }, { id: 'pakaian_atasan_jas', value: 'Jas', eng: 'suit jacket' } ];
+        const pakaianBawahanOptions = [ { id: 'pakaian_bawahan_celana_panjang', value: 'Celana Panjang', eng: 'trousers' }, { id: 'pakaian_bawahan_jeans', value: 'Jeans', eng: 'jeans' }, { id: 'pakaian_bawahan_celana_pendek', value: 'Celana Pendek', eng: 'shorts' }, { id: 'pakaian_bawahan_rok', value: 'Rok', eng: 'skirt' }, { id: 'pakaian_bawahan_legging', value: 'Legging', eng: 'leggings' }, { id: 'pakaian_bawahan_sarung', value: 'Sarung', eng: 'sarong' }, ];
+        const pakaianTerusanOptions = [ { id: 'pakaian_terusan_gaun', value: 'Gaun', eng: 'dress' }, { id: 'pakaian_terusan_daster', value: 'Daster', eng: 'duster dress' }, { id: 'pakaian_terusan_jumpsuit', value: 'Jumpsuit', eng: 'jumpsuit' }, { id: 'pakaian_terusan_piyama', value: 'Piyama', eng: 'pajamas' }, { id: 'pakaian_terusan_bikini', value: 'Bikini', eng: 'bikini' }, { id: 'pakaian_terusan_kebaya_modern', value: 'Kebaya Modern', eng: 'modern kebaya' }, { id: 'pakaian_terusan_kebaya_kutubaru', value: 'Kebaya Kutubaru', eng: 'Kutubaru kebaya' }, { id: 'pakaian_terusan_kebaya_kartini', value: 'Kebaya Kartini', eng: 'Kartini kebaya' }, { id: 'pakaian_terusan_batik_gaun', value: 'Gaun Batik', eng: 'Batik dress' }, { id: 'pakaian_terusan_baju_adat_jawa', value: 'Baju Adat Jawa', eng: 'Javanese traditional attire' }, { id: 'pakaian_terusan_baju_adat_sumatra', value: 'Baju Adat Sumatra', eng: 'Sumatran traditional attire' }, { id: 'pakaian_terusan_baju_adat_kalimantan', value: 'Baju Adat Kalimantan', eng: 'Kalimantan traditional attire' }, { id: 'pakaian_terusan_baju_adat_sulawesi', value: 'Baju Adat Sulawesi', eng: 'Sulawesi traditional attire' }, { id: 'pakaian_terusan_baju_adat_papua', value: 'Baju Adat Papua', eng: 'Papuan traditional attire' }, { id: 'pakaian_terusan_baju_adat_bali', value: 'Baju Adat Bali', eng: 'Balinese traditional attire' }];
+        const pakaianSeragamOptions = [ { id: 'pakaian_seragam_korpri', value: 'Korpri', eng: 'Korpri uniform' }, { id: 'pakaian_seragam_olahraga', value: 'Olahraga', eng: 'sportswear uniform' }, { id: 'pakaian_seragam_gym', value: 'Olahraga (gym)', eng: 'gym clothes' }, { id: 'pakaian_seragam_sd', value: 'Sekolah Dasar (SD)', eng: 'elementary school uniform' }, { id: 'pakaian_seragam_smp', value: 'Sekolah Menengah Pertama (SMP)', eng: 'middle school uniform' }, { id: 'pakaian_seragam_sma', value: 'Sekolah Menengah Atas (SMA)', eng: 'high school uniform' }, { id: 'pakaian_seragam_dinsos', value: 'Dinas Sosial', eng: 'social service uniform' }, { id: 'pakaian_seragam_narapidana', value: 'Narapidana', eng: 'prisoner uniform' }, { id: 'pakaian_seragam_kantor', value: 'Kerja (kantoran)', eng: 'office attire' }, { id: 'pakaian_seragam_gojek', value: 'Jaket Gojek', eng: 'Gojek jacket' }, { id: 'pakaian_seragam_grab', value: 'Jaket Grab', eng: 'Grab jacket' }, { id: 'pakaian_seragam_suster', value: 'Suster', eng: 'nurse uniform' }, { id: 'pakaian_seragam_dokter', value: 'Dokter', eng: 'doctor uniform' }, { id: 'pakaian_seragam_pengemis', value: 'Pengemis (Lusun/Sobek)', eng: 'beggar\'s clothes (worn/torn)' } ];
+        const poseOptions = [ { group: 'Pose Berdiri', id: 'pose_berdiri_klasik', value: 'Pose Klasik (berdiri menyamping 45 derajat)', eng: 'Classic stand (standing at a 45-degree angle)' }, { group: 'Pose Berdiri', id: 'pose_berdiri_kontraposto', value: 'Pose Kontraposto (berat pada satu kaki)', eng: 'Contrapposto pose (weight on one leg)' }, { group: 'Pose Berdiri', id: 'pose_berdiri_menyandar', value: 'Menyandar (di dinding, pohon, dll.)', eng: 'Leaning (against a wall, tree, etc.)' }, { group: 'Pose Berdiri', id: 'pose_berdiri_tangan_saku', value: 'Tangan di saku', eng: 'Hands in pockets' }, { group: 'Pose Berdiri', id: 'pose_berdiri_tangan_pinggang', value: 'Tangan di pinggang', eng: 'Hands on hips' }, { group: 'Pose Berdiri', id: 'pose_berdiri_menyilangkan_tangan', value: 'Menyilangkan tangan', eng: 'Crossed arms' }, { group: 'Pose Berdiri', id: 'pose_berdiri_berjalan', value: 'Langkah berjalan', eng: 'Walking stride' }, { group: 'Pose Berdiri', id: 'pose_berdiri_melihat_belakang', value: 'Melihat ke belakang lewat bahu', eng: 'Looking over the shoulder' }, { group: 'Pose Duduk', id: 'pose_duduk_condong_depan', value: 'Duduk condong ke depan', eng: 'Sitting leaning forward' }, { group: 'Pose Duduk', id: 'pose_duduk_menyilangkan_kaki', value: 'Duduk menyilangkan kaki', eng: 'Sitting with legs crossed' }, { id: 'pose_duduk_satu_lutut', value: 'Duduk di lantai dengan satu lutut ditekuk', eng: 'Sitting on the floor with one knee bent' }, { id: 'pose_duduk_memeluk_lutut', value: 'Duduk memeluk lutut', eng: 'Sitting hugging knees' }, { id: 'pose_duduk_bersila', value: 'Duduk bersila', eng: 'Sitting cross-legged' }, { id: 'pose_duduk_berpikir', value: 'Pose Berpikir (dagu ditopang)', eng: 'The Thinker pose (chin resting on hand)' }, { id: 'pose_duduk_tangga', value: 'Duduk di tangga', eng: 'Sitting on stairs' }, { group: 'Pose Berbaring', id: 'pose_baring_telentang', value: 'Berbaring telentang', eng: 'Lying on back' }, { id: 'pose_baring_tengkurap', value: 'Berbaring tengkurap (menopang dengan siku)', eng: 'Lying on stomach (propped on elbows)' }, { id: 'pose_baring_menyamping', value: 'Berbaring menyamping', eng: 'Lying on side' }, { group: 'Pose Dinamis', id: 'pose_dinamis_melompat', value: 'Melompat', eng: 'Jumping' }, { id: 'pose_dinamis_menari', value: 'Menari atau berputar', eng: 'Dancing or twirling' }, { id: 'pose_dinamis_interaksi_rambut', value: 'Interaksi dengan rambut', eng: 'Interacting with hair' }, { id: 'pose_dinamis_interaksi_pakaian', value: 'Interaksi dengan pakaian', eng: 'Interacting with clothing' }, { id: 'pose_dinamis_properti', value: 'Menggunakan properti (buku, cangkir, dll.)', eng: 'Using a prop (book, cup, etc.)' } ];
+        const aksiUmumOptions = [ { id: 'aksi_duduk', value: 'Duduk', eng: 'sitting' }, { id: 'aksi_terlentang', value: 'Terlentang', eng: 'lying down' }, { id: 'aksi_berdiri', value: 'Berdiri', eng: 'standing' }, { id: 'aksi_jalan_perlahan', value: 'Berjalan Perlahan', eng: 'walking slowly' }, { id: 'aksi_berjalan', value: 'Berjalan', eng: 'walking' }, { id: 'aksi_mengendap', value: 'Mengendap-endap', eng: 'sneaking' }, { id: 'aksi_melompat', value: 'Melompat', eng: 'jumping' }, { id: 'aksi_merayap', value: 'Merayap', eng: 'crawling' }, { id: 'aksi_berlindung', value: 'Berlindung', eng: 'taking cover' }, { id: 'aksi_bersembunyi', value: 'Bersembunyi', eng: 'hiding' }, { id: 'aksi_berlari', value: 'Berlari', eng: 'running' }, { id: 'aksi_terbang', value: 'Terbang', eng: 'flying' }, { id: 'aksi_berenang', value: 'Berenang', eng: 'swimming' }, { id: 'aksi_menari', value: 'Menari', eng: 'dancing' }, { id: 'aksi_makan', value: 'Makan', eng: 'eating' }, { id: 'aksi_minum', value: 'Minum', eng: 'drinking' }, { id: 'aksi_tidur', value: 'Tidur', eng: 'sleeping' }, { id: 'aksi_berbicara', value: 'Berbicara', eng: 'talking' }, { id: 'aksi_menulis', value: 'Menulis', eng: 'writing' }, { id: 'aksi_membaca', value: 'Membaca', eng: 'reading' }, { id: 'aksi_melihat', value: 'Melihat', eng: 'looking' }, { id: 'aksi_menunggu', value: 'Menunggu', eng: 'waiting' }, { id: 'aksi_berkelahi', value: 'Berkelahi', eng: 'fighting' }, { id: 'aksi_bekerja', value: 'Bekerja', eng: 'working' }, { id: 'aksi_bermain', value: 'Bermain', eng: 'playing' }, { id: 'aksi_menyanyi', value: 'Menyanyi', eng: 'singing' }, { id: 'aksi_mengemudi', value: 'Mengemudi', eng: 'driving' }, { id: 'aksi_memanjat', value: 'Memanjat', eng: 'climbing' }, { id: 'aksi_melempar', value: 'Melempar', eng: 'throwing' }, { id: 'aksi_menangkap', value: 'Menangkap', eng: 'catching' }, { id: 'aksi_mendorong', value: 'Mendorong', eng: 'pushing' }, { id: 'aksi_menarik', value: 'Menarik', eng: 'pulling' }, { id: 'aksi_berpikir', value: 'Berpikir', eng: 'thinking' }, { id: 'aksi_merenung', value: 'Merenung', eng: 'pondering' } ];
+        const ekspresiOptions = [ { id: 'ekspresi_marah', value: 'Marah', eng: 'angry' }, { id: 'ekspresi_kesal', value: 'Kesal', eng: 'annoyed' }, { id: 'ekspresi_senang', value: 'Senang', eng: 'happy' }, { id: 'ekspresi_gembira', value: 'Gembira', eng: 'joyful' }, { id: 'ekspresi_lucu', value: 'Lucu', eng: 'funny' }, { id: 'ekspresi_penasaran', value: 'Penasaran', eng: 'curious' }, { id: 'ekspresi_bingung', value: 'Bingung', eng: 'confused' }, { id: 'ekspresi_takut', value: 'Takut', eng: 'scared' }, { id: 'ekspresi_menangis', value: 'Menangis', eng: 'crying' }, { id: 'ekspresi_tertawa', value: 'Tertawa', eng: 'laughing' }, { id: 'ekspresi_takjub', value: 'Takjub', eng: 'amazed' }, { id: 'ekspresi_sedih', value: 'Sedih', eng: 'sad' }, { id: 'ekspresi_terkejut', value: 'Terkejut', eng: 'surprised' }, { id: 'ekspresi_jijik', value: 'Jijik', eng: 'disgusted' }, { id: 'ekspresi_bosan', value: 'Bosan', eng: 'bored' }, { id: 'ekspresi_sombong', value: 'Sombong', eng: 'arrogant' }, { id: 'ekspresi_malu', value: 'Malu', eng: 'shy' }, { id: 'ekspresi_gugup', value: 'Gugup', eng: 'nervous' }, { id: 'ekspresi_percaya_diri', value: 'Percaya Diri', eng: 'confident' }, { id: 'ekspresi_tenang', value: 'Tenang', eng: 'calm' }, { id: 'ekspresi_serius', value: 'Serius', eng: 'serious' }, { id: 'ekspresi_sinis', value: 'Sinis', eng: 'cynical' }, { id: 'ekspresi_berharap', value: 'Berharap', eng: 'hopeful' }, { id: 'ekspresi_putus_asa', value: 'Putus Asa', eng: 'desperate' }, { id: 'ekspresi_puas', value: 'Puas', eng: 'satisfied' }, { id: 'ekspresi_cinta', value: 'Cinta', eng: 'in love' }, { id: 'ekspresi_benci', value: 'Benci', eng: 'hateful' }, { id: 'ekspresi_cemburu', value: 'Cemburu', eng: 'jealous' }, { id: 'ekspresi_sakit', value: 'Sakit', eng: 'in pain' }, { id: 'ekspresi_netral', value: 'Netral', eng: 'neutral' } ];
+        const videoFormatOptions = [ { id: 'format_landscape_16_9', value: 'Landscape (16:9)', eng: '16:9 aspect ratio', description: 'Umum untuk YouTube, TV.' }, { id: 'format_portrait_9_16', value: 'Portrait (9:16)', eng: '9:16 aspect ratio', description: 'Untuk TikTok, Reels, Shorts.' }, { id: 'format_square_1_1', value: 'Square (1:1)', eng: '1:1 aspect ratio', description: 'Umum untuk Instagram Feed.' } ];
+
+        // --- DOMContentLoaded & Initializers ---
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeTabsAndListeners();
+            initializeTemplateManager();
+            initializeGlobalEventListeners();
+        });
+        
+        function initializeTabsAndListeners() {
+             ['tab1', 'tab2', 'tab3'].forEach(tabId => {
+                const tabPane = document.getElementById(tabId);
+                let tabLabel = (tabId === 'tab1') ? 'Subjek Utama' : (tabId === 'tab2') ? 'Subjek Kedua' : 'Subjek Ketiga';
+                if (tabPane) tabPane.innerHTML = generateTabContent(tabId, tabLabel);
+                
+                document.getElementById(`section_karakter_umum_${tabId}`).classList.add('hidden');
+                document.getElementById(`section_kelamin_spesifik_${tabId}`).classList.remove('hidden');
+                handlePekerjaanPakaianInteraction(tabId);
+
+                populateAllOptionsForTab(tabId);
+                initializeSubjectModifierListenersForTab(tabId);
+                toggleFemaleSpecificOptionsForTab(tabId, false); 
+            });
+        }
+
+        function populateAllOptionsForTab(tabId) {
+            populateSelect(`karakterUmum_selector_${tabId}`, karakterUmumUsiaOptions);
+            populateOptions(`kelaminOptionsContainer_${tabId}`, kelaminOptionsBaseUpdated, { inputType: 'radio', groupName: `kelamin_selector_${tabId}`, tabId: tabId });
+            populateOptions(`femaleTraitsOptionsContainer_${tabId}`, femaleTraitsOptions, { inputType: 'checkbox', tabId: tabId });
+            populateSelect(`usia_selector_${tabId}`, usiaOptions);
+            populateSelect(`panjangRambut_selector_${tabId}`, panjangRambutOptions);
+            populateSelect(`jenisRambut_selector_${tabId}`, jenisRambutOptions);
+            populateSelect(`gayaPotongan_selector_${tabId}`, gayaPotonganOptions);
+            populateSelect(`penataanRambut_selector_${tabId}`, penataanRambutOptions);
+            populateSelect(`rambutColor_selector_${tabId}`, rambutColorOptions);
+            populateSelect(`makeup_selector_${tabId}`, makeupOptions);
+            populateSelect(`bentukWajah_selector_${tabId}`, bentukWajahOptions);
+            populateSelect(`bentukHidung_selector_${tabId}`, bentukHidungOptions);
+            populateSelect(`bentukBibir_selector_${tabId}`, bentukBibirOptions);
+            populateSelect(`warnaMata_selector_${tabId}`, warnaMataOptions);
+            populateSelect(`warnaKulit_selector_${tabId}`, warnaKulitOptions);
+            populateSelect(`etnis_selector_${tabId}`, etnisOptions);
+            populateSelect(`postur_selector_${tabId}`, posturOptions);
+            populateSelect(`fisik_selector_${tabId}`, fisikOptions);
+            populateSelect(`arahPandang_selector_${tabId}`, arahPandangOptionsBase);
+            populateSelect(`pekerjaan_selector_${tabId}`, pekerjaanOptionsOriginal);
+            populateSelect(`pakaianAtasan_selector_${tabId}`, pakaianAtasanOptions);
+            populateSelect(`pakaianBawahan_selector_${tabId}`, pakaianBawahanOptions);
+            populateSelect(`pakaianTerusan_selector_${tabId}`, pakaianTerusanOptions);
+            populateSelect(`pakaianSeragam_selector_${tabId}`, pakaianSeragamOptions);
+            populateSelect(`hijab_selector_${tabId}`, hijabOptions);
+            populateOptions(`asesorisOptionsContainer_${tabId}`, asesorisOptions, { inputType: 'checkbox', tabId: tabId });
+            populateSelect(`pose_selector_${tabId}`, poseOptions);
+            populateSelect(`aksiUmum_selector_${tabId}`, aksiUmumOptions);
+            populateSelect(`ekspresi_selector_${tabId}`, ekspresiOptions);
+        }
+
+        function initializeGlobalEventListeners() {
+            populateSelect('videoFormatOptionsContainer_global', videoFormatOptions);
+            document.querySelectorAll('.tab-button').forEach(button => button.addEventListener('click', handleTabClick));
+            document.getElementById('clearFormBtn').addEventListener('click', clearFullForm);
+            document.getElementById('generateBtn').addEventListener('click', generateCombinedPrompt);
+            document.getElementById('generateImageBtn').addEventListener('click', sendToImagen);
+            document.getElementById('copyIndonesianBtn').addEventListener('click', () => copyToClipboard(document.getElementById('generatedPromptIndonesian').value, 'Prompt Bahasa Indonesia'));
+            document.getElementById('copyEnglishBtn').addEventListener('click', () => copyToClipboard(document.getElementById('generatedPromptEnglish').textContent, 'Prompt Bahasa Inggris'));
+        }
+        
+        function handleTabClick(event) {
+            const button = event.currentTarget;
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+            button.classList.add('active');
+            activeTabId = button.dataset.tab;
+            document.getElementById(activeTabId).classList.add('active');
+        }
+
+        function generateCombinedPrompt() {
+            let promptIndoArray = [], promptEngArray = [];
+            ['tab1', 'tab2', 'tab3'].forEach(tabId => {
+                rebuildSubjectModifiersForTab(tabId); 
+                const subjectTextIndo = document.getElementById(`subject_${tabId}`).value.trim();
+                const subjectTextEng = tabData[tabId].subjectModifiers.map(m => m.eng).join(', ');
+                if (subjectTextIndo) {
+                    promptIndoArray.push(`menampilkan ${subjectTextIndo}`);
+                    promptEngArray.push(`featuring ${subjectTextEng}`); 
+                }
+            });
+
+            const getSelectValues = (id) => {
+                const select = document.getElementById(id);
+                if (!select || !select.value) return { indo: "", eng: "" };
+                const selectedOption = select.options[select.selectedIndex];
+                return { indo: selectedOption.value, eng: selectedOption.dataset.eng };
+            };
+
+            let finalPromptIndo = `Sebuah video ${promptIndoArray.join(" DAN ") || "menampilkan sebuah adegan"}. `;
+            let finalPromptEng = `A video ${promptEngArray.join(" AND ") || "featuring a scene"}. `;
+
+            const settingGlobal = document.getElementById('setting_global').value.trim();
+            if (settingGlobal) {
+                finalPromptIndo += `Berlatar di ${settingGlobal}. `;
+                finalPromptEng += `Set in ${settingGlobal}. `;
+            }
+            
+            const addGlobalDetail = (selectId, indoPrefix, engPrefix) => {
+                const item = getSelectValues(selectId);
+                if (item.indo) {
+                    finalPromptIndo += `${indoPrefix}${item.indo}. `;
+                    finalPromptEng += `${engPrefix}${item.eng}. `;
+                }
+            };
+
+            addGlobalDetail('time_global', 'Waktu: ', 'Time: ');
+            addGlobalDetail('cameraMovement_global', 'Gerakan Kamera: ', 'Camera Movement: ');
+            addGlobalDetail('lighting_global', 'Pencahayaan: ', 'Lighting: ');
+            addGlobalDetail('videoStyle_global', 'Gaya Video: ', 'Style: ');
+            addGlobalDetail('videoMood_global', 'Suasana: ', 'Mood: ');
+            addGlobalDetail('videoFormatOptionsContainer_global', 'Format: ', 'Format: ');
+
+            const soundMusic = document.getElementById('soundMusic').value.trim();
+            if (soundMusic) { finalPromptIndo += `Terdengar ${soundMusic}. `; finalPromptEng += `Sound of ${soundMusic}. `; }
+            
+            const additionalDetails = document.getElementById('additionalDetails').value.trim();
+            if (additionalDetails) { finalPromptIndo += `Detail tambahan: ${additionalDetails}. `; finalPromptEng += `Additional details: ${additionalDetails}. `; }
+            
+            const noCaptionCheckbox = document.getElementById('noCaptionCheckbox');
+            if (noCaptionCheckbox && noCaptionCheckbox.checked) {
+                finalPromptIndo += `Dalam Bahasa Indonesia, tanpa caption.`;
+                finalPromptEng += `In Indonesian language, no captions.`;
+            }
+
+
+            document.getElementById('generatedPromptIndonesian').value = finalPromptIndo.replace(/\s+/g, ' ').trim();
+            document.getElementById('generatedPromptEnglish').textContent = finalPromptEng.replace(/\s+/g, ' ').trim();
+            document.getElementById('promptResultContainer').classList.remove('hidden');
+        }
+
+        function clearFullForm() {
+            if (confirm("Yakin ingin membersihkan seluruh form?")) {
+                document.getElementById('promptForm').reset();
+                ['tab1', 'tab2', 'tab3'].forEach(tabId => {
+                    tabData[tabId] = { subjectModifiers: [], radioGroupStates: {}, subjectText: '', otherModifiers: {} };
+                    rebuildSubjectModifiersForTab(tabId);
+                });
+                document.getElementById('promptResultContainer').classList.add('hidden');
+            }
+        }
+        
+        function copyToClipboard(text, type) { navigator.clipboard.writeText(text).then(() => showCopyNotification(type, "disalin")); }
+        function showCopyNotification(item, action) {
+            const notification = document.getElementById('copyNotification');
+            notification.textContent = `${item} berhasil ${action}!`;
+            notification.classList.remove('hidden');
+            notification.style.opacity = '1';
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                setTimeout(() => notification.classList.add('hidden'), 500);
+            }, 2000);
+        }
+
+        async function sendToImagen() {
+            const apiKey = document.getElementById('apiKey').value.trim();
+            if (!apiKey) {
+                alert('Silakan masukkan Google AI API Key Anda.');
+                return;
+            }
+
+            const prompt = document.getElementById('generatedPromptEnglish').textContent;
+            if (!prompt) {
+                alert('Silakan buat prompt terlebih dahulu.');
+                return;
+            }
+
+            const imageResultContainer = document.getElementById('imageResultContainer');
+            const imageLoader = document.getElementById('imageLoader');
+            const imageWrapper = document.getElementById('imageWrapper');
+            const generatedImage = document.getElementById('generatedImage');
+            const downloadBtn = document.getElementById('downloadImageBtn');
+            
+            imageResultContainer.classList.remove('hidden');
+            imageLoader.classList.remove('hidden');
+            imageWrapper.classList.add('hidden');
+
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${apiKey}`;
+            const payload = {
+                instances: [{ "prompt": prompt }],
+                parameters: { "sampleCount": 1 }
+            };
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(`API Error: ${error.error.message}`);
+                }
+
+                const result = await response.json();
+                
+                if (result.predictions && result.predictions.length > 0 && result.predictions[0].bytesBase64Encoded) {
+                    const imageUrl = `data:image/png;base64,${result.predictions[0].bytesBase64Encoded}`;
+                    generatedImage.src = imageUrl;
+                    downloadBtn.href = imageUrl;
+                    imageLoader.classList.add('hidden');
+                    imageWrapper.classList.remove('hidden');
+                    showCopyNotification("Gambar", "dibuat");
+                } else {
+                    throw new Error("Respons API tidak valid atau tidak berisi gambar.");
+                }
+
+            } catch (error) {
+                console.error("Error calling Imagen API:", error);
+                alert(`Gagal membuat gambar: ${error.message}`);
+                imageLoader.classList.add('hidden');
+            }
+        }
+
+
+        // --- Template Manager Logic ---
+        function initializeTemplateManager() {
+            document.getElementById('saveTemplateBtn').addEventListener('click', saveCurrentTemplate);
+            document.getElementById('loadTemplateBtn').addEventListener('click', loadSelectedTemplate);
+            document.getElementById('deleteTemplateBtn').addEventListener('click', deleteSelectedTemplate);
+            document.getElementById('exportTemplateBtn').addEventListener('click', exportTemplateToFile);
+            document.getElementById('importTemplateBtn').addEventListener('click', () => document.getElementById('importFileInput').click());
+            document.getElementById('importFileInput').addEventListener('change', importTemplateFromFile);
+            updateTemplateList();
+        }
+
+        function getFormState() {
+            const state = { inputs: {}, radios: {}, checkboxes: {} };
+            document.querySelectorAll('#promptForm input[type="text"], #promptForm textarea, #promptForm select').forEach(el => state.inputs[el.id] = el.value);
+            document.querySelectorAll('#promptForm input[type="radio"]:checked').forEach(el => state.radios[el.name] = el.id);
+            document.querySelectorAll('#promptForm input[type="checkbox"]:checked').forEach(el => state.checkboxes[el.id] = true);
+            return state;
+        }
+
+        function setFormState(state) {
+            clearFullFormForLoad();
+            Object.keys(state.inputs).forEach(id => { if (document.getElementById(id)) document.getElementById(id).value = state.inputs[id]; });
+            Object.keys(state.checkboxes).forEach(id => { if (document.getElementById(id)) document.getElementById(id).checked = true; });
+            Object.keys(state.radios).forEach(name => { if (document.getElementById(state.radios[name])) document.getElementById(state.radios[name]).checked = true; });
+            ['tab1', 'tab2', 'tab3'].forEach(rebuildSubjectModifiersAfterLoad);
+        }
+        
+        function rebuildSubjectModifiersAfterLoad(tabId) {
+             document.querySelectorAll(`#${tabId} input, #${tabId} select`).forEach(el => el.dispatchEvent(new Event('change', { bubbles: true })));
+             rebuildSubjectModifiersForTab(tabId);
+        }
+
+        function clearFullFormForLoad() {
+             document.getElementById('promptForm').reset();
+             ['tab1', 'tab2', 'tab3'].forEach(tabId => {
+                tabData[tabId] = { subjectModifiers: [], radioGroupStates: {}, subjectText: '', otherModifiers: {} };
+                document.getElementById(`subject_${tabId}`).value = '';
+                handleBaldSelection(tabId);
+             });
+        }
+
+        function getTemplates() { return JSON.parse(localStorage.getItem('promptTemplates') || '{}'); }
+        function saveTemplates(templates) { localStorage.setItem('promptTemplates', JSON.stringify(templates)); }
+        function saveCurrentTemplate() {
+            const name = document.getElementById('templateName').value.trim();
+            if (!name) { alert('Silakan masukkan nama template.'); return; }
+            const templates = getTemplates();
+            templates[name] = getFormState();
+            saveTemplates(templates);
+            updateTemplateList();
+            document.getElementById('templateName').value = '';
+            alert(`Template "${name}" disimpan.`);
+        }
+        function loadSelectedTemplate() {
+            const name = document.getElementById('loadTemplateSelect').value;
+            if (!name) { alert('Pilih template untuk dimuat.'); return; }
+            setFormState(getTemplates()[name]);
+            alert(`Template "${name}" dimuat.`);
+        }
+        function deleteSelectedTemplate() {
+             const name = document.getElementById('loadTemplateSelect').value;
+             if (!name) { alert('Pilih template untuk dihapus.'); return; }
+             if (confirm(`Yakin ingin menghapus template "${name}"?`)) {
+                 const templates = getTemplates();
+                 delete templates[name];
+                 saveTemplates(templates);
+                 updateTemplateList();
+                 alert(`Template "${name}" dihapus.`);
+             }
+        }
+        function updateTemplateList() {
+            const select = document.getElementById('loadTemplateSelect');
+            select.innerHTML = '<option value="">-- Pilih Template --</option>';
+            Object.keys(getTemplates()).sort().forEach(name => {
+                select.options[select.options.length] = new Option(name, name);
+            });
+        }
+         function exportTemplateToFile() {
+            const select = document.getElementById('loadTemplateSelect');
+            const name = select.value;
+            if (!name) {
+                alert('Silakan pilih template dari daftar untuk diekspor.');
+                return;
+            }
+            const templates = getTemplates();
+            const templateData = templates[name];
+
+            if (!templateData) {
+                alert('Template tidak ditemukan.');
+                return;
+            }
+
+            const dataStr = JSON.stringify(templateData, null, 2);
+            const dataBlob = new Blob([dataStr], {type: "application/json"});
+            const url = URL.createObjectURL(dataBlob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `template_${name.replace(/\s+/g, '_')}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showCopyNotification(`Template "${name}"`, "diekspor");
+        }
+
+        function importTemplateFromFile(event) {
+            const file = event.target.files[0];
+            if (!file) {
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const content = JSON.parse(e.target.result);
+                    // Basic validation
+                    if (typeof content.inputs !== 'object' || typeof content.radios !== 'object' || typeof content.checkboxes !== 'object') {
+                        throw new Error('Format file tidak valid.');
+                    }
+                    
+                    let templateName = file.name.replace('.json', '').replace(/_/g, ' ');
+                    
+                    // Check for name conflict and ask user
+                    const templates = getTemplates();
+                    if (templates[templateName]) {
+                        if (!confirm(`Template dengan nama "${templateName}" sudah ada. Timpa?`)) {
+                            // Reset file input to allow re-selection of the same file
+                            event.target.value = '';
+                            return;
+                        }
+                    }
+
+                    templates[templateName] = content;
+                    saveTemplates(templates);
+                    updateTemplateList();
+                    loadTemplateSelect.value = templateName;
+                    setFormState(content);
+
+                    alert(`Template "${templateName}" berhasil diimpor dan dimuat.`);
+
+                } catch (error) {
+                    alert('Gagal memuat template: ' + error.message);
+                } finally {
+                    // Reset file input to allow re-selection of the same file
+                     event.target.value = '';
+                }
+            };
+            reader.readAsText(file);
+        }
+    </script>
+</body>
+</html>
