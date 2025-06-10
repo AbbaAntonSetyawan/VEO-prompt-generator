@@ -40,4 +40,5 @@ Gunakan Template: Simpan konfigurasi favorit Anda sebagai template untuk digunak
 
 Kredit
 Dibuat oleh Anton Setyawan untuk para pejuang receh yang tangguh.
+
 Salam Abba.
