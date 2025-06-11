@@ -17,7 +17,7 @@ Perbaikan Tampilan & Logika: Merapikan tata letak pada beberapa bagian menu dan 
 Deskripsi
 Aplikasi web sederhana untuk membantu membuat prompt yang detail dan terstruktur untuk model AI video seperti Google Veo.
 
-Live Aplikasi: https://.github.io/AbbaAntonSetyawan/VEO-prompt-generator
+Live Aplikasi: [VEO-prompt-generator](https://abbaantonsetyawan.github.io/VEO-prompt-generator/)
 
 Deskripsi
 Generator ini dirancang untuk mempermudah proses pembuatan prompt kompleks dengan menyediakan antarmuka berbasis formulir. Pengguna dapat memilih berbagai opsi untuk mendeskripsikan subjek, latar, gaya video, gerakan kamera, dan detail lainnya. Aplikasi ini secara otomatis menerjemahkan pilihan dari Bahasa Indonesia ke Bahasa Inggris untuk kompatibilitas dengan model AI.
