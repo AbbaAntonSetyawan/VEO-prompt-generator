@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VEO 3 Prompt Generator V4</title>
+    <title>VEO 3 Prompt Generator V4.1</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -218,8 +218,8 @@
 <body>
     <div class="container">
         <header class="text-center mb-8">
-            <h1 class="text-3xl font-bold text-gray-800">VEO 3 Prompt Generator V4</h1>
-            <p class="text-gray-600 mt-2">Oleh Anton Setyawan untuk pejuang receh yang tangguh</p>
+            <h1 class="text-3xl font-bold text-gray-800">VEO 3 Prompt Generator V4.1</h1>
+            <p class="text-gray-600 mt-2">Oleh Anton Setyawan untuk para pejuang receh yang tangguh</p>
         </header>
 
         <!-- Template Manager -->
@@ -418,35 +418,6 @@
             </div>
         </div>
 
-        <!-- Gemini/Imagen API Section -->
-        <div id="aiInteractionContainer" class="prompt-output-container">
-             <h2 class="text-xl font-semibold text-gray-700 mb-4 pt-4 border-t border-gray-300">Pratinjau Gambar AI (Imagen)</h2>
-             <p class="text-sm text-gray-600 mb-4">Fitur ini menggunakan model Imagen dari Google untuk membuat pratinjau gambar berdasarkan prompt Bahasa Inggris Anda. Karena API untuk model video seperti Veo belum tersedia, ini adalah cara terbaik untuk memvisualisasikan adegan Anda.</p>
-             <div class="input-group">
-                <label for="apiKey" class="group-label !text-base">Google AI API Key Anda</label>
-                <input type="password" id="apiKey" name="apiKey" placeholder="Masukkan API Key Anda di sini" class="w-full">
-                <p class="text-xs text-gray-500 mt-1">API Key Anda tidak disimpan atau dibagikan. Anda bisa mendapatkannya dari <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-blue-600 hover:underline">Google AI Studio</a>.</p>
-             </div>
-             <div class="flex justify-end">
-                <button type="button" id="generateImageBtn" class="btn btn-success">
-                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"></path></svg>
-                    Buat Gambar Pratinjau
-                </button>
-             </div>
-             <div id="imageResultContainer" class="mt-6 hidden">
-                <h3 class="font-semibold text-gray-800 mb-2">Hasil Gambar:</h3>
-                <div id="imageLoader" class="flex justify-center items-center h-64 bg-gray-100 rounded-lg">
-                    <div class="loader"></div>
-                </div>
-                <div id="imageWrapper" class="hidden">
-                    <img id="generatedImage" src="" alt="Gambar yang dihasilkan oleh AI" class="rounded-lg shadow-md w-full">
-                    <a id="downloadImageBtn" href="#" download="pratinjau-ai.png" class="btn btn-primary mt-3 w-full">
-                       <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>
-                        Unduh Gambar
-                    </a>
-                </div>
-             </div>
-        </div>
     </div>
 
     <div id="copyNotification" class="hidden"></div>
@@ -473,13 +444,26 @@
                     <div class="input-group">
                         <label class="group-label !text-base !font-semibold">Pendekatan Deskripsi</label>
                         <div class="flex flex-wrap gap-4" style="margin-bottom: 1.5rem;">
-                            <div> <input type="radio" id="choice_karakter_umum_${tabId}" name="subjek_deskripsi_choice_${tabId}" value="karakter_umum" class="subjek-deskripsi-choice-radio"> <label for="choice_karakter_umum_${tabId}" class="option-label">Karakter Umum</label> </div>
-                            <div> <input type="radio" id="choice_kelamin_spesifik_${tabId}" name="subjek_deskripsi_choice_${tabId}" value="kelamin_spesifik" class="subjek-deskripsi-choice-radio" checked> <label for="choice_kelamin_spesifik_${tabId}" class="option-label">Kelamin Spesifik & Usia</label> </div>
+                            <div> <input type="radio" id="choice_kelamin_spesifik_${tabId}" name="subjek_deskripsi_choice_${tabId}" value="kelamin_spesifik" class="subjek-deskripsi-choice-radio" checked> <label for="choice_kelamin_spesifik_${tabId}" class="option-label">Manusia (Spesifik)</label> </div>
+                            <div> <input type="radio" id="choice_karakter_umum_${tabId}" name="subjek_deskripsi_choice_${tabId}" value="karakter_umum" class="subjek-deskripsi-choice-radio"> <label for="choice_karakter_umum_${tabId}" class="option-label">Manusia (Umum)</label> </div>
+                             <div> <input type="radio" id="choice_karakter_lain_${tabId}" name="subjek_deskripsi_choice_${tabId}" value="karakter_lain" class="subjek-deskripsi-choice-radio"> <label for="choice_karakter_lain_${tabId}" class="option-label">Karakter Lain</label> </div>
                         </div>
                     </div>
 
                     <div id="section_karakter_umum_${tabId}" class="hidden">
                         <div class="input-group"> <label for="karakterUmum_selector_${tabId}" class="group-label !text-base !mb-2">Karakter Umum</label> <select id="karakterUmum_selector_${tabId}" name="karakterUmum_selector_${tabId}" class="subject-modifier-item-select w-full"></select> </div>
+                    </div>
+
+                    <div id="section_karakter_lain_${tabId}" class="hidden">
+                        <div class="input-group"> 
+                            <label for="karakterLain_selector_${tabId}" class="group-label !text-base !mb-2">Pilih Karakter (dari daftar)</label> 
+                            <select id="karakterLain_selector_${tabId}" name="karakterLain_selector_${tabId}" class="subject-modifier-item-select w-full"></select> 
+                        </div>
+                        <div class="input-group">
+                            <label for="karakterLain_kustom_${tabId}" class="group-label !text-base !mb-2">Karakter Kustom & Deskripsi</label>
+                            <textarea id="karakterLain_kustom_${tabId}" rows="3" class="subject-modifier-custom" placeholder="Untuk karakter kustom, KOSONGKAN menu di atas dan tulis di sini (mis: seekor Gryphon). Untuk menambah detail pada karakter dari daftar, tulis detailnya di sini (mis: mengenakan zirah emas)."></textarea>
+                            <p class="text-xs text-gray-500 mt-1">Anda tetap bisa menggunakan menu Pakaian & Aksesoris di bawah untuk melengkapi deskripsi karakter dari daftar ataupun karakter kustom.</p>
+                        </div>
                     </div>
 
                     <div id="section_kelamin_spesifik_${tabId}">
@@ -494,30 +478,33 @@
                         </div>
                     </div>
                     
-                    <div class="grid-container-for-dropdowns">
-                        <div> <label for="panjangRambut_selector_${tabId}" class="group-label !text-base !mb-2">Panjang Rambut</label> <select id="panjangRambut_selector_${tabId}" name="panjangRambut_selector_${tabId}" class="subject-modifier-item-select w-full"></select> </div>
-                        <div> <label for="jenisRambut_selector_${tabId}" class="group-label !text-base !mb-2">Jenis Rambut</label> <select id="jenisRambut_selector_${tabId}" name="jenisRambut_selector_${tabId}" class="subject-modifier-item-select w-full"></select> </div>
-                        <div> <label for="gayaPotongan_selector_${tabId}" class="group-label !text-base !mb-2">Gaya Potongan Rambut</label> <select id="gayaPotongan_selector_${tabId}" name="gayaPotongan_selector_${tabId}" class="subject-modifier-item-select w-full"></select> </div>
-                        <div> <label for="penataanRambut_selector_${tabId}" class="group-label !text-base !mb-2">Penataan Rambut</label> <select id="penataanRambut_selector_${tabId}" name="penataanRambut_selector_${tabId}" class="subject-modifier-item-select w-full"></select> </div>
-                        <div> <label for="rambutColor_selector_${tabId}" class="group-label !text-base !mb-2">Warna Rambut</label> <select id="rambutColor_selector_${tabId}" name="rambutColor_selector_${tabId}" class="subject-modifier-item-select w-full"></select> </div>
-                        <div> <label for="makeup_selector_${tabId}" class="group-label !text-base !mb-2">Makeup</label> <select id="makeup_selector_${tabId}" name="makeup_selector_${tabId}" class="subject-modifier-item-select w-full"></select> </div>
-                        <div> <label for="bentukWajah_selector_${tabId}" class="group-label !text-base !mb-2">Bentuk Wajah</label> <select id="bentukWajah_selector_${tabId}" name="bentukWajah_selector_${tabId}" class="subject-modifier-item-select w-full"></select> </div>
-                        <div> <label for="bentukHidung_selector_${tabId}" class="group-label !text-base !mb-2">Bentuk Hidung</label> <select id="bentukHidung_selector_${tabId}" name="bentukHidung_selector_${tabId}" class="subject-modifier-item-select w-full"></select> </div>
-                        <div> <label for="bentukBibir_selector_${tabId}" class="group-label !text-base !mb-2">Bentuk Bibir</label> <select id="bentukBibir_selector_${tabId}" name="bentukBibir_selector_${tabId}" class="subject-modifier-item-select w-full"></select> </div>
-                        <div> <label for="warnaMata_selector_${tabId}" class="group-label !text-base !mb-2">Warna Mata</label> <select id="warnaMata_selector_${tabId}" name="warnaMata_selector_${tabId}" class="subject-modifier-item-select w-full"></select> </div>
-                        <div> <label for="warnaKulit_selector_${tabId}" class="group-label !text-base !mb-2">Warna Kulit</label> <select id="warnaKulit_selector_${tabId}" name="warnaKulit_selector_${tabId}" class="subject-modifier-item-select w-full"></select> </div>
-                        <div> <label for="etnis_selector_${tabId}" class="group-label !text-base !mb-2">Etnis/Ras</label> <select id="etnis_selector_${tabId}" name="etnis_selector_${tabId}" class="subject-modifier-item-select w-full"></select> </div>
-                        <div> <label for="postur_selector_${tabId}" class="group-label !text-base !mb-2">Postur</label> <select id="postur_selector_${tabId}" name="postur_selector_${tabId}" class="subject-modifier-item-select w-full"></select> </div>
-                        <div class="md:col-span-2"> 
-                            <label for="fisik_selector_${tabId}" class="group-label !text-base !mb-2">Ciri Fisik</label> 
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <select id="fisik_selector_${tabId}" name="fisik_selector_${tabId}" class="subject-modifier-item-select w-full"></select>
-                                <input type="text" id="fisik_kustom_${tabId}" name="fisik_kustom_${tabId}" placeholder="Ciri fisik lainnya..." class="subject-modifier-custom">
+                    <div id="human_attributes_container_${tabId}">
+                        <div class="grid-container-for-dropdowns">
+                            <div> <label for="panjangRambut_selector_${tabId}" class="group-label !text-base !mb-2">Panjang Rambut</label> <select id="panjangRambut_selector_${tabId}" name="panjangRambut_selector_${tabId}" class="subject-modifier-item-select w-full"></select> </div>
+                            <div> <label for="jenisRambut_selector_${tabId}" class="group-label !text-base !mb-2">Jenis Rambut</label> <select id="jenisRambut_selector_${tabId}" name="jenisRambut_selector_${tabId}" class="subject-modifier-item-select w-full"></select> </div>
+                            <div> <label for="gayaPotongan_selector_${tabId}" class="group-label !text-base !mb-2">Gaya Potongan Rambut</label> <select id="gayaPotongan_selector_${tabId}" name="gayaPotongan_selector_${tabId}" class="subject-modifier-item-select w-full"></select> </div>
+                            <div> <label for="penataanRambut_selector_${tabId}" class="group-label !text-base !mb-2">Penataan Rambut</label> <select id="penataanRambut_selector_${tabId}" name="penataanRambut_selector_${tabId}" class="subject-modifier-item-select w-full"></select> </div>
+                            <div> <label for="rambutColor_selector_${tabId}" class="group-label !text-base !mb-2">Warna Rambut</label> <select id="rambutColor_selector_${tabId}" name="rambutColor_selector_${tabId}" class="subject-modifier-item-select w-full"></select> </div>
+                            <div> <label for="makeup_selector_${tabId}" class="group-label !text-base !mb-2">Makeup</label> <select id="makeup_selector_${tabId}" name="makeup_selector_${tabId}" class="subject-modifier-item-select w-full"></select> </div>
+                            <div> <label for="bentukWajah_selector_${tabId}" class="group-label !text-base !mb-2">Bentuk Wajah</label> <select id="bentukWajah_selector_${tabId}" name="bentukWajah_selector_${tabId}" class="subject-modifier-item-select w-full"></select> </div>
+                            <div> <label for="bentukHidung_selector_${tabId}" class="group-label !text-base !mb-2">Bentuk Hidung</label> <select id="bentukHidung_selector_${tabId}" name="bentukHidung_selector_${tabId}" class="subject-modifier-item-select w-full"></select> </div>
+                            <div> <label for="bentukBibir_selector_${tabId}" class="group-label !text-base !mb-2">Bentuk Bibir</label> <select id="bentukBibir_selector_${tabId}" name="bentukBibir_selector_${tabId}" class="subject-modifier-item-select w-full"></select> </div>
+                            <div> <label for="warnaMata_selector_${tabId}" class="group-label !text-base !mb-2">Warna Mata</label> <select id="warnaMata_selector_${tabId}" name="warnaMata_selector_${tabId}" class="subject-modifier-item-select w-full"></select> </div>
+                            <div> <label for="warnaKulit_selector_${tabId}" class="group-label !text-base !mb-2">Warna Kulit</label> <select id="warnaKulit_selector_${tabId}" name="warnaKulit_selector_${tabId}" class="subject-modifier-item-select w-full"></select> </div>
+                            <div> <label for="etnis_selector_${tabId}" class="group-label !text-base !mb-2">Etnis/Ras</label> <select id="etnis_selector_${tabId}" name="etnis_selector_${tabId}" class="subject-modifier-item-select w-full"></select> </div>
+                            <div> <label for="postur_selector_${tabId}" class="group-label !text-base !mb-2">Postur</label> <select id="postur_selector_${tabId}" name="postur_selector_${tabId}" class="subject-modifier-item-select w-full"></select> </div>
+                            <div class="md:col-span-2"> 
+                                <label for="fisik_selector_${tabId}" class="group-label !text-base !mb-2">Ciri Fisik</label> 
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <select id="fisik_selector_${tabId}" name="fisik_selector_${tabId}" class="subject-modifier-item-select w-full"></select>
+                                    <input type="text" id="fisik_kustom_${tabId}" name="fisik_kustom_${tabId}" placeholder="Ciri fisik lainnya..." class="subject-modifier-custom">
+                                </div>
                             </div>
+                            <div> <label for="arahPandang_selector_${tabId}" class="group-label !text-base !mb-2">Arah Pandangan</label> <select id="arahPandang_selector_${tabId}" name="arahPandang_selector_${tabId}" class="subject-modifier-item-select w-full"></select> </div>
+                            <div> <label for="pekerjaan_selector_${tabId}" class="group-label !text-base !mb-2">Pekerjaan</label> <select id="pekerjaan_selector_${tabId}" name="pekerjaan_selector_${tabId}" class="subject-modifier-item-select w-full"></select> </div>
                         </div>
-                        <div> <label for="arahPandang_selector_${tabId}" class="group-label !text-base !mb-2">Arah Pandangan</label> <select id="arahPandang_selector_${tabId}" name="arahPandang_selector_${tabId}" class="subject-modifier-item-select w-full"></select> </div>
-                        <div> <label for="pekerjaan_selector_${tabId}" class="group-label !text-base !mb-2">Pekerjaan</label> <select id="pekerjaan_selector_${tabId}" name="pekerjaan_selector_${tabId}" class="subject-modifier-item-select w-full"></select> </div>
-                        
+                    </div>
+                     <div class="grid-container-for-dropdowns mt-4">
                         <div> 
                              <label for="pakaianAtasan_selector_${tabId}" class="group-label !text-base !mb-2">Pakaian Atasan</label> 
                              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -546,7 +533,8 @@
                                 <input type="text" id="pakaianSeragam_kustom_${tabId}" name="pakaianSeragam_kustom_${tabId}" placeholder="dengan tulisan di dada namamu" class="subject-modifier-custom">
                             </div>
                         </div>
-                         <div> <label for="hijab_selector_${tabId}" class="group-label !text-base !mb-2">Hijab</label> <select id="hijab_selector_${tabId}" name="hijab_selector_${tabId}" class="subject-modifier-item-select w-full"></select> </div>
+                        <div> <label for="hijab_selector_${tabId}" class="group-label !text-base !mb-2">Hijab</label> <select id="hijab_selector_${tabId}" name="hijab_selector_${tabId}" class="subject-modifier-item-select w-full"></select> </div>
+
                     </div>
                     <div class="input-group mt-5">
                          <label class="group-label !text-base !mb-2">Aksesoris</label>
@@ -642,7 +630,13 @@
 
             const deskripsiChoice = document.querySelector(`input[name="subjek_deskripsi_choice_${tabId}"]:checked`)?.value;
 
-            if (deskripsiChoice === 'karakter_umum') {
+            if (deskripsiChoice === 'karakter_lain') {
+                getSelectModifier(`karakterLain_selector_${tabId}`);
+                const kustomLain = document.getElementById(`karakterLain_kustom_${tabId}`).value.trim();
+                if(kustomLain) {
+                    orderedModifiers.push(getModifierObject(kustomLain, kustomLain));
+                }
+            } else if (deskripsiChoice === 'karakter_umum') {
                 getSelectModifier(`karakterUmum_selector_${tabId}`);
             } else { // kelamin_spesifik
                 const selectedKelaminRadio = document.querySelector(`input[name="kelamin_selector_${tabId}"]:checked`);
@@ -684,75 +678,75 @@
                 if (ageIndo) {
                     orderedModifiers.push(getModifierObject(ageIndo, ageEng));
                 }
-            }
-            
-            // --- Hair Block ---
-            const hairPartsIndo = [];
-            const hairPartsEng = [];
-            const addHairPart = (selectorId) => {
-                 const select = document.getElementById(selectorId);
-                if (select && select.value && !select.disabled) {
-                    const selectedOpt = select.options[select.selectedIndex];
-                    hairPartsIndo.push(selectedOpt.value);
-                    hairPartsEng.push(selectedOpt.dataset.eng);
+                 // --- Hair Block ---
+                const hairPartsIndo = [];
+                const hairPartsEng = [];
+                const addHairPart = (selectorId) => {
+                     const select = document.getElementById(selectorId);
+                    if (select && select.value && !select.disabled) {
+                        const selectedOpt = select.options[select.selectedIndex];
+                        hairPartsIndo.push(selectedOpt.value);
+                        hairPartsEng.push(selectedOpt.dataset.eng);
+                    }
+                };
+                const panjangRambutSelect = document.getElementById(`panjangRambut_selector_${tabId}`);
+                if(panjangRambutSelect && panjangRambutSelect.value) {
+                    const selectedVal = panjangRambutSelect.value;
+                    if(selectedVal.includes("Botak")) {
+                        orderedModifiers.push(getModifierObject("berkepala " + selectedVal.toLowerCase(), "with a " + panjangRambutSelect.options[panjangRambutSelect.selectedIndex].dataset.eng + " head"));
+                    } else {
+                        hairPartsIndo.push(panjangRambutSelect.value);
+                        hairPartsEng.push(panjangRambutSelect.options[panjangRambutSelect.selectedIndex].dataset.eng);
+                    }
                 }
-            };
-            const panjangRambutSelect = document.getElementById(`panjangRambut_selector_${tabId}`);
-            if(panjangRambutSelect && panjangRambutSelect.value) {
-                const selectedVal = panjangRambutSelect.value;
-                if(selectedVal.includes("Botak")) {
-                    orderedModifiers.push(getModifierObject("berkepala " + selectedVal.toLowerCase(), "with a " + panjangRambutSelect.options[panjangRambutSelect.selectedIndex].dataset.eng + " head"));
-                } else {
-                    hairPartsIndo.push(panjangRambutSelect.value);
-                    hairPartsEng.push(panjangRambutSelect.options[panjangRambutSelect.selectedIndex].dataset.eng);
+
+                addHairPart(`jenisRambut_selector_${tabId}`);
+                addHairPart(`gayaPotongan_selector_${tabId}`);
+                addHairPart(`penataanRambut_selector_${tabId}`);
+                addHairPart(`rambutColor_selector_${tabId}`);
+
+                if(hairPartsIndo.length > 0) {
+                     orderedModifiers.push(getModifierObject("Memiliki Rambut " + hairPartsIndo.join(" "), "with " + hairPartsEng.join(" ") + " hair"));
                 }
+
+                // --- Other Human Attributes ---
+                getSelectModifier(`makeup_selector_${tabId}`, "memakai riasan ", "wearing ");
+                getSelectModifier(`bentukWajah_selector_${tabId}`, "dengan wajah ", "with ");
+                getSelectModifier(`bentukHidung_selector_${tabId}`, "dengan hidung ", "with ");
+                getSelectModifier(`bentukBibir_selector_${tabId}`, "dengan bibir ", "with ");
+                getSelectModifier(`warnaMata_selector_${tabId}`, "dan mata berwarna ", "and ");
+                getSelectModifier(`warnaKulit_selector_${tabId}`, "berkulit ", "with ");
+                getSelectModifier(`etnis_selector_${tabId}`, "Berwajah ", "");
+                
+                const posturFisikIndo = [];
+                const posturFisikEng = [];
+                const posturSelect = document.getElementById(`postur_selector_${tabId}`);
+                if(posturSelect && posturSelect.value) {
+                    posturFisikIndo.push(posturSelect.value);
+                    posturFisikEng.push(posturSelect.options[posturSelect.selectedIndex].dataset.eng);
+                }
+                const fisikSelect = document.getElementById(`fisik_selector_${tabId}`);
+                if(fisikSelect && fisikSelect.value) {
+                    posturFisikIndo.push(fisikSelect.value);
+                    posturFisikEng.push(fisikSelect.options[fisikSelect.selectedIndex].dataset.eng);
+                }
+                if(posturFisikIndo.length > 0) {
+                     orderedModifiers.push(getModifierObject(posturFisikIndo.join(" dan "), posturFisikEng.join(" and ")));
+                }
+                const customFisik = document.getElementById(`fisik_kustom_${tabId}`)?.value.trim();
+                if (customFisik) {
+                    orderedModifiers.push(getModifierObject(customFisik, customFisik));
+                }
+
+                getSelectModifier(`arahPandang_selector_${tabId}`);
+                getSelectModifier(`pekerjaan_selector_${tabId}`, "seorang ", "a ");
             }
-
-            addHairPart(`jenisRambut_selector_${tabId}`);
-            addHairPart(`gayaPotongan_selector_${tabId}`);
-            addHairPart(`penataanRambut_selector_${tabId}`);
-            addHairPart(`rambutColor_selector_${tabId}`);
-
-            if(hairPartsIndo.length > 0) {
-                 orderedModifiers.push(getModifierObject("Memiliki Rambut " + hairPartsIndo.join(" "), "with " + hairPartsEng.join(" ") + " hair"));
-            }
-
-            // --- Other Attributes ---
-            getSelectModifier(`makeup_selector_${tabId}`, "memakai riasan ", "wearing ");
-            getSelectModifier(`bentukWajah_selector_${tabId}`, "dengan wajah ", "with ");
-            getSelectModifier(`bentukHidung_selector_${tabId}`, "dengan hidung ", "with ");
-            getSelectModifier(`bentukBibir_selector_${tabId}`, "dengan bibir ", "with ");
-            getSelectModifier(`warnaMata_selector_${tabId}`, "dan mata berwarna ", "and ");
-            getSelectModifier(`warnaKulit_selector_${tabId}`, "berkulit ", "with ");
             
-            getSelectModifier(`etnis_selector_${tabId}`, "Berwajah ", "");
-            
-            const posturFisikIndo = [];
-            const posturFisikEng = [];
-            const posturSelect = document.getElementById(`postur_selector_${tabId}`);
-            if(posturSelect && posturSelect.value) {
-                posturFisikIndo.push(posturSelect.value);
-                posturFisikEng.push(posturSelect.options[posturSelect.selectedIndex].dataset.eng);
-            }
-            const fisikSelect = document.getElementById(`fisik_selector_${tabId}`);
-            if(fisikSelect && fisikSelect.value) {
-                posturFisikIndo.push(fisikSelect.value);
-                posturFisikEng.push(fisikSelect.options[fisikSelect.selectedIndex].dataset.eng);
-            }
-            if(posturFisikIndo.length > 0) {
-                 orderedModifiers.push(getModifierObject(posturFisikIndo.join(" dan "), posturFisikEng.join(" and ")));
-            }
-            const customFisik = document.getElementById(`fisik_kustom_${tabId}`)?.value.trim();
-            if (customFisik) {
-                orderedModifiers.push(getModifierObject(customFisik, customFisik));
-            }
-
-            getSelectModifier(`arahPandang_selector_${tabId}`);
-            getSelectModifier(`pekerjaan_selector_${tabId}`, "seorang ", "a ");
+            // --- Shared Attributes ---
             getSelectModifier(`pakaianAtasan_selector_${tabId}`, "mengenakan ", "wearing ");
             getSelectModifier(`pakaianBawahan_selector_${tabId}`, "dan ", "and ");
             getSelectModifier(`pakaianTerusan_selector_${tabId}`, "mengenakan ", "wearing ");
-            getSelectModifier(`pakaianSeragam_selector_${tabId}`, "mengenakan ", "wearing ");
+            getSelectModifier(`pakaianSeragam_selector_${tabId}`, "", "wearing ");
             getSelectModifier(`hijab_selector_${tabId}`, "memakai ", "wearing ");
             getCheckboxModifiers(`asesorisOptionsContainer_${tabId}`, "memakai ", "wearing ");
 
@@ -914,7 +908,9 @@
                 radio.addEventListener('change', () => {
                     const choice = radio.value;
                     document.getElementById(`section_karakter_umum_${tabId}`).classList.toggle('hidden', choice !== 'karakter_umum');
-                    document.getElementById(`section_kelamin_spesifik_${tabId}`).classList.toggle('hidden', choice === 'karakter_umum');
+                    document.getElementById(`section_kelamin_spesifik_${tabId}`).classList.toggle('hidden', choice !== 'kelamin_spesifik');
+                    document.getElementById(`section_karakter_lain_${tabId}`).classList.toggle('hidden', choice !== 'karakter_lain');
+                    document.getElementById(`human_attributes_container_${tabId}`).classList.toggle('hidden', choice === 'karakter_lain');
                     rebuildSubjectModifiersForTab(tabId);
                 });
             });
@@ -926,7 +922,8 @@
         }
         
         // --- Data Definitions with English translations ---
-        const karakterUmumUsiaOptions = [ { id: 'karakter_anak_anak', value: 'Anak-Anak', eng: 'Children' }, { id: 'karakter_bocah', value: 'Bocah', eng: 'A young child' }, { id: 'karakter_anak_bujang', value: 'Anak Bujang', eng: 'A lad' }, { id: 'karakter_remaja_putri', value: 'Remaja Putri', eng: 'A teenage girl' }, { id: 'karakter_ibu_muda', value: 'Ibu Muda', eng: 'A young mother' }, { id: 'karakter_ibu_ibu', value: 'Ibu-Ibu', eng: 'Mothers' }, { id: 'karakter_tante', value: 'Tante', eng: 'An aunt' }, { id: 'karakter_om_om', value: 'Om-om', eng: 'Uncles' }, { id: 'karakter_bapak_bapak', value: 'Bapak-Bapak', eng: 'Fathers' }, { id: 'karakter_nenek_nenek', value: 'Nenek-Nenek', eng: 'Grandmothers' }, { id: 'karakter_nenek_centil', value: 'Nenek Centil', eng: 'A flirty grandmother' }, { id: 'karakter_nenek_genit', value: 'Nenek Genit', eng: 'A coy grandmother' }, { id: 'karakter_kakek_kakek', value: 'Kakek-Kakek', eng: 'Grandfathers' }, { id: 'karakter_kucing', value: 'Kucing', eng: 'A cat' }, { id: 'karakter_anjing', value: 'Anjing', eng: 'A dog' }, { id: 'karakter_tikus', value: 'Tikus', eng: 'A mouse' }, { id: 'karakter_burung', value: 'Burung', eng: 'A bird' }, { id: 'karakter_naga', value: 'Naga', eng: 'A dragon' }, { id: 'karakter_robot', value: 'Robot', eng: 'A robot' }, { id: 'karakter_alien', value: 'Alien', eng: 'An alien' }, { id: 'karakter_monster', value: 'Monster', eng: 'A monster' }, { id: 'karakter_hantu', value: 'Hantu', eng: 'A ghost' }, { id: 'karakter_sekelompok', value: 'Sekelompok orang', eng: 'A group of people' }, { id: 'karakter_kerumunan', value: 'Kerumunan orang', eng: 'A crowd of people' }, { id: 'karakter_pasangan', value: 'Pasangan', eng: 'A couple' } ];
+        const karakterUmumUsiaOptions = [ { id: 'karakter_anak_anak', value: 'Anak-Anak', eng: 'Children' }, { id: 'karakter_bocah', value: 'Bocah', eng: 'A young child' }, { id: 'karakter_anak_bujang', value: 'Anak Bujang', eng: 'A lad' }, { id: 'karakter_remaja_putri', value: 'Remaja Putri', eng: 'A teenage girl' }, { id: 'karakter_ibu_muda', value: 'Ibu Muda', eng: 'A young mother' }, { id: 'karakter_ibu_ibu', value: 'Ibu-Ibu', eng: 'Mothers' }, { id: 'karakter_tante', value: 'Tante', eng: 'An aunt' }, { id: 'karakter_om_om', value: 'Om-om', eng: 'Uncles' }, { id: 'karakter_bapak_bapak', value: 'Bapak-Bapak', eng: 'Fathers' }, { id: 'karakter_nenek_nenek', value: 'Nenek-Nenek', eng: 'Grandmothers' }, { id: 'karakter_nenek_centil', value: 'Nenek Centil', eng: 'A flirty grandmother' }, { id: 'karakter_nenek_genit', value: 'Nenek Genit', eng: 'A coy grandmother' }, { id: 'karakter_kakek_kakek', value: 'Kakek-Kakek', eng: 'Grandfathers' }];
+        const karakterLainOptions = [ { id: 'karakter_kucing', value: 'Kucing', eng: 'A cat' }, { id: 'karakter_anjing', value: 'Anjing', eng: 'A dog' }, { id: 'karakter_tikus', value: 'Tikus', eng: 'A mouse' }, { id: 'karakter_burung', value: 'Burung', eng: 'A bird' }, { id: 'karakter_serigala', value: 'Serigala', eng: 'A wolf' }, { id: 'karakter_naga', value: 'Naga', eng: 'A dragon' }, { id: 'karakter_robot', value: 'Robot', eng: 'A robot' }, { id: 'karakter_alien', value: 'Alien', eng: 'An alien' }, { id: 'karakter_monster', value: 'Monster', eng: 'A monster' }, { id: 'karakter_hantu', value: 'Hantu', eng: 'A ghost' }, { id: 'karakter_makhluk_fantasi', value: 'Makhluk Fantasi', eng: 'A fantasy creature' }, { id: 'karakter_kendaraan', value: 'Kendaraan', eng: 'A vehicle' } ];
         const kelaminOptionsBaseUpdated = [ { id: 'kelamin_pria', value: 'Pria', eng: 'a Man' }, { id: 'kelamin_wanita', value: 'Wanita', eng: 'a Woman' }, { id: 'kelamin_gadis', value: 'Gadis', eng: 'a Girl' } ];
         const femaleTraitsOptions = [ { id: 'trait_cantik', value: 'Cantik', eng: 'beautiful' }, { id: 'trait_imut', value: 'Imut', eng: 'cute' }, { id: 'trait_sederhana', value: 'Sederhana', eng: 'simple' }, { id: 'trait_anggun', value: 'Anggun', eng: 'graceful' } ];
         const usiaOptions = [ { id: 'usia_bayi', value: 'Bayi', eng: 'baby' }, { id: 'usia_anak_kecil', value: 'Anak Kecil', eng: 'young child' }, { id: 'usia_remaja', value: 'Remaja', eng: 'teenager' }, { id: 'usia_dewasa_muda', value: 'Dewasa Muda', eng: 'young adult' }, { id: 'usia_dewasa', value: 'Dewasa', eng: 'adult' }, { id: 'usia_tua', value: 'Tua', eng: 'elderly' } ];
@@ -951,7 +948,7 @@
         const pakaianAtasanOptions = [ { id: 'pakaian_atasan_kaos', value: 'Kaos', eng: 't-shirt' }, { id: 'pakaian_atasan_vneck', value: 'Kaos V-Neck', eng: 'V-neck t-shirt' }, { id: 'pakaian_atasan_oversized', value: 'Kaos Kebesaran', eng: 'oversized t-shirt' }, { id: 'pakaian_atasan_kemeja', value: 'Kemeja', eng: 'shirt' }, { id: 'pakaian_atasan_tanktop', value: 'Tanktop', eng: 'tank top' }, { id: 'pakaian_atasan_blus', value: 'Blus', eng: 'blouse' }, { id: 'pakaian_atasan_hoodie', value: 'Hoodie', eng: 'hoodie' }, { id: 'pakaian_atasan_sweater', value: 'Sweater', eng: 'sweater' }, { id: 'pakaian_atasan_jaket', value: 'Jaket', eng: 'jacket' }, { id: 'pakaian_atasan_jas', value: 'Jas', eng: 'suit jacket' } ];
         const pakaianBawahanOptions = [ { id: 'pakaian_bawahan_celana_panjang', value: 'Celana Panjang', eng: 'trousers' }, { id: 'pakaian_bawahan_jeans', value: 'Jeans', eng: 'jeans' }, { id: 'pakaian_bawahan_celana_pendek', value: 'Celana Pendek', eng: 'shorts' }, { id: 'pakaian_bawahan_rok', value: 'Rok', eng: 'skirt' }, { id: 'pakaian_bawahan_legging', value: 'Legging', eng: 'leggings' }, { id: 'pakaian_bawahan_sarung', value: 'Sarung', eng: 'sarong' }, ];
         const pakaianTerusanOptions = [ { id: 'pakaian_terusan_gaun', value: 'Gaun', eng: 'dress' }, { id: 'pakaian_terusan_daster', value: 'Daster', eng: 'duster dress' }, { id: 'pakaian_terusan_jumpsuit', value: 'Jumpsuit', eng: 'jumpsuit' }, { id: 'pakaian_terusan_piyama', value: 'Piyama', eng: 'pajamas' }, { id: 'pakaian_terusan_bikini', value: 'Bikini', eng: 'bikini' }, { id: 'pakaian_terusan_kebaya_modern', value: 'Kebaya Modern', eng: 'modern kebaya' }, { id: 'pakaian_terusan_kebaya_kutubaru', value: 'Kebaya Kutubaru', eng: 'Kutubaru kebaya' }, { id: 'pakaian_terusan_kebaya_kartini', value: 'Kebaya Kartini', eng: 'Kartini kebaya' }, { id: 'pakaian_terusan_batik_gaun', value: 'Gaun Batik', eng: 'Batik dress' }, { id: 'pakaian_terusan_baju_adat_jawa', value: 'Baju Adat Jawa', eng: 'Javanese traditional attire' }, { id: 'pakaian_terusan_baju_adat_sumatra', value: 'Baju Adat Sumatra', eng: 'Sumatran traditional attire' }, { id: 'pakaian_terusan_baju_adat_kalimantan', value: 'Baju Adat Kalimantan', eng: 'Kalimantan traditional attire' }, { id: 'pakaian_terusan_baju_adat_sulawesi', value: 'Baju Adat Sulawesi', eng: 'Sulawesi traditional attire' }, { id: 'pakaian_terusan_baju_adat_papua', value: 'Baju Adat Papua', eng: 'Papuan traditional attire' }, { id: 'pakaian_terusan_baju_adat_bali', value: 'Baju Adat Bali', eng: 'Balinese traditional attire' }];
-        const pakaianSeragamOptions = [ { id: 'pakaian_seragam_korpri', value: 'Korpri', eng: 'Korpri uniform' }, { id: 'pakaian_seragam_olahraga', value: 'Olahraga', eng: 'sportswear uniform' }, { id: 'pakaian_seragam_gym', value: 'Olahraga (gym)', eng: 'gym clothes' }, { id: 'pakaian_seragam_sd', value: 'Sekolah Dasar (SD)', eng: 'elementary school uniform' }, { id: 'pakaian_seragam_smp', value: 'Sekolah Menengah Pertama (SMP)', eng: 'middle school uniform' }, { id: 'pakaian_seragam_sma', value: 'Sekolah Menengah Atas (SMA)', eng: 'high school uniform' }, { id: 'pakaian_seragam_dinsos', value: 'Dinas Sosial', eng: 'social service uniform' }, { id: 'pakaian_seragam_narapidana', value: 'Narapidana', eng: 'prisoner uniform' }, { id: 'pakaian_seragam_kantor', value: 'Kerja (kantoran)', eng: 'office attire' }, { id: 'pakaian_seragam_gojek', value: 'Jaket Gojek', eng: 'Gojek jacket' }, { id: 'pakaian_seragam_grab', value: 'Jaket Grab', eng: 'Grab jacket' }, { id: 'pakaian_seragam_suster', value: 'Suster', eng: 'nurse uniform' }, { id: 'pakaian_seragam_dokter', value: 'Dokter', eng: 'doctor uniform' }, { id: 'pakaian_seragam_pengemis', value: 'Pengemis (Lusun/Sobek)', eng: 'beggar\'s clothes (worn/torn)' } ];
+        const pakaianSeragamOptions = [ { id: 'pakaian_seragam_korpri', value: 'Seragam Korpri', eng: 'Korpri uniform' }, { id: 'pakaian_seragam_olahraga', value: 'Seragam Olahraga', eng: 'sportswear uniform' }, { id: 'pakaian_seragam_gym', value: 'Pakaian Olahraga (gym)', eng: 'gym clothes' }, { id: 'pakaian_seragam_sd', value: 'Seragam Sekolah Dasar (SD)', eng: 'elementary school uniform' }, { id: 'pakaian_seragam_smp', value: 'Seragam Sekolah Menengah Pertama (SMP)', eng: 'middle school uniform' }, { id: 'pakaian_seragam_sma', value: 'Seragam Sekolah Menengah Atas (SMA)', eng: 'high school uniform' }, { id: 'pakaian_seragam_dinsos', value: 'Seragam Dinas Sosial', eng: 'social service uniform' }, { id: 'pakaian_seragam_narapidana', value: 'Baju Narapidana', eng: 'prisoner uniform' }, { id: 'pakaian_seragam_kantor', value: 'Pakaian Kerja (kantoran)', eng: 'office attire' }, { id: 'pakaian_seragam_gojek', value: 'Jaket Gojek', eng: 'Gojek jacket' }, { id: 'pakaian_seragam_grab', value: 'Jaket Grab', eng: 'Grab jacket' }, { id: 'pakaian_seragam_suster', value: 'Seragam Suster', eng: 'nurse uniform' }, { id: 'pakaian_seragam_dokter', value: 'Seragam Dokter', eng: 'doctor uniform' }, { id: 'pakaian_seragam_pengemis', value: 'Pakaian Pengemis (Lusun/Sobek)', eng: 'beggar\'s clothes (worn/torn)' } ];
         const poseOptions = [ { group: 'Pose Berdiri', id: 'pose_berdiri_klasik', value: 'Pose Klasik (berdiri menyamping 45 derajat)', eng: 'Classic stand (standing at a 45-degree angle)' }, { group: 'Pose Berdiri', id: 'pose_berdiri_kontraposto', value: 'Pose Kontraposto (berat pada satu kaki)', eng: 'Contrapposto pose (weight on one leg)' }, { group: 'Pose Berdiri', id: 'pose_berdiri_menyandar', value: 'Menyandar (di dinding, pohon, dll.)', eng: 'Leaning (against a wall, tree, etc.)' }, { group: 'Pose Berdiri', id: 'pose_berdiri_tangan_saku', value: 'Tangan di saku', eng: 'Hands in pockets' }, { group: 'Pose Berdiri', id: 'pose_berdiri_tangan_pinggang', value: 'Tangan di pinggang', eng: 'Hands on hips' }, { group: 'Pose Berdiri', id: 'pose_berdiri_menyilangkan_tangan', value: 'Menyilangkan tangan', eng: 'Crossed arms' }, { group: 'Pose Berdiri', id: 'pose_berdiri_berjalan', value: 'Langkah berjalan', eng: 'Walking stride' }, { group: 'Pose Berdiri', id: 'pose_berdiri_melihat_belakang', value: 'Melihat ke belakang lewat bahu', eng: 'Looking over the shoulder' }, { group: 'Pose Duduk', id: 'pose_duduk_condong_depan', value: 'Duduk condong ke depan', eng: 'Sitting leaning forward' }, { group: 'Pose Duduk', id: 'pose_duduk_menyilangkan_kaki', value: 'Duduk menyilangkan kaki', eng: 'Sitting with legs crossed' }, { id: 'pose_duduk_satu_lutut', value: 'Duduk di lantai dengan satu lutut ditekuk', eng: 'Sitting on the floor with one knee bent' }, { id: 'pose_duduk_memeluk_lutut', value: 'Duduk memeluk lutut', eng: 'Sitting hugging knees' }, { id: 'pose_duduk_bersila', value: 'Duduk bersila', eng: 'Sitting cross-legged' }, { id: 'pose_duduk_berpikir', value: 'Pose Berpikir (dagu ditopang)', eng: 'The Thinker pose (chin resting on hand)' }, { id: 'pose_duduk_tangga', value: 'Duduk di tangga', eng: 'Sitting on stairs' }, { group: 'Pose Berbaring', id: 'pose_baring_telentang', value: 'Berbaring telentang', eng: 'Lying on back' }, { id: 'pose_baring_tengkurap', value: 'Berbaring tengkurap (menopang dengan siku)', eng: 'Lying on stomach (propped on elbows)' }, { id: 'pose_baring_menyamping', value: 'Berbaring menyamping', eng: 'Lying on side' }, { group: 'Pose Dinamis', id: 'pose_dinamis_melompat', value: 'Melompat', eng: 'Jumping' }, { id: 'pose_dinamis_menari', value: 'Menari atau berputar', eng: 'Dancing or twirling' }, { id: 'pose_dinamis_interaksi_rambut', value: 'Interaksi dengan rambut', eng: 'Interacting with hair' }, { id: 'pose_dinamis_interaksi_pakaian', value: 'Interaksi dengan pakaian', eng: 'Interacting with clothing' }, { id: 'pose_dinamis_properti', value: 'Menggunakan properti (buku, cangkir, dll.)', eng: 'Using a prop (book, cup, etc.)' } ];
         const aksiUmumOptions = [ { id: 'aksi_duduk', value: 'Duduk', eng: 'sitting' }, { id: 'aksi_terlentang', value: 'Terlentang', eng: 'lying down' }, { id: 'aksi_berdiri', value: 'Berdiri', eng: 'standing' }, { id: 'aksi_jalan_perlahan', value: 'Berjalan Perlahan', eng: 'walking slowly' }, { id: 'aksi_berjalan', value: 'Berjalan', eng: 'walking' }, { id: 'aksi_mengendap', value: 'Mengendap-endap', eng: 'sneaking' }, { id: 'aksi_melompat', value: 'Melompat', eng: 'jumping' }, { id: 'aksi_merayap', value: 'Merayap', eng: 'crawling' }, { id: 'aksi_berlindung', value: 'Berlindung', eng: 'taking cover' }, { id: 'aksi_bersembunyi', value: 'Bersembunyi', eng: 'hiding' }, { id: 'aksi_berlari', value: 'Berlari', eng: 'running' }, { id: 'aksi_terbang', value: 'Terbang', eng: 'flying' }, { id: 'aksi_berenang', value: 'Berenang', eng: 'swimming' }, { id: 'aksi_menari', value: 'Menari', eng: 'dancing' }, { id: 'aksi_makan', value: 'Makan', eng: 'eating' }, { id: 'aksi_minum', value: 'Minum', eng: 'drinking' }, { id: 'aksi_tidur', value: 'Tidur', eng: 'sleeping' }, { id: 'aksi_berbicara', value: 'Berbicara', eng: 'talking' }, { id: 'aksi_menulis', value: 'Menulis', eng: 'writing' }, { id: 'aksi_membaca', value: 'Membaca', eng: 'reading' }, { id: 'aksi_melihat', value: 'Melihat', eng: 'looking' }, { id: 'aksi_menunggu', value: 'Menunggu', eng: 'waiting' }, { id: 'aksi_berkelahi', value: 'Berkelahi', eng: 'fighting' }, { id: 'aksi_bekerja', value: 'Bekerja', eng: 'working' }, { id: 'aksi_bermain', value: 'Bermain', eng: 'playing' }, { id: 'aksi_menyanyi', value: 'Menyanyi', eng: 'singing' }, { id: 'aksi_mengemudi', value: 'Mengemudi', eng: 'driving' }, { id: 'aksi_memanjat', value: 'Memanjat', eng: 'climbing' }, { id: 'aksi_melempar', value: 'Melempar', eng: 'throwing' }, { id: 'aksi_menangkap', value: 'Menangkap', eng: 'catching' }, { id: 'aksi_mendorong', value: 'Mendorong', eng: 'pushing' }, { id: 'aksi_menarik', value: 'Menarik', eng: 'pulling' }, { id: 'aksi_berpikir', value: 'Berpikir', eng: 'thinking' }, { id: 'aksi_merenung', value: 'Merenung', eng: 'pondering' } ];
         const ekspresiOptions = [ { id: 'ekspresi_marah', value: 'Marah', eng: 'angry' }, { id: 'ekspresi_kesal', value: 'Kesal', eng: 'annoyed' }, { id: 'ekspresi_senang', value: 'Senang', eng: 'happy' }, { id: 'ekspresi_gembira', value: 'Gembira', eng: 'joyful' }, { id: 'ekspresi_lucu', value: 'Lucu', eng: 'funny' }, { id: 'ekspresi_penasaran', value: 'Penasaran', eng: 'curious' }, { id: 'ekspresi_bingung', value: 'Bingung', eng: 'confused' }, { id: 'ekspresi_takut', value: 'Takut', eng: 'scared' }, { id: 'ekspresi_menangis', value: 'Menangis', eng: 'crying' }, { id: 'ekspresi_tertawa', value: 'Tertawa', eng: 'laughing' }, { id: 'ekspresi_takjub', value: 'Takjub', eng: 'amazed' }, { id: 'ekspresi_sedih', value: 'Sedih', eng: 'sad' }, { id: 'ekspresi_terkejut', value: 'Terkejut', eng: 'surprised' }, { id: 'ekspresi_jijik', value: 'Jijik', eng: 'disgusted' }, { id: 'ekspresi_bosan', value: 'Bosan', eng: 'bored' }, { id: 'ekspresi_sombong', value: 'Sombong', eng: 'arrogant' }, { id: 'ekspresi_malu', value: 'Malu', eng: 'shy' }, { id: 'ekspresi_gugup', value: 'Gugup', eng: 'nervous' }, { id: 'ekspresi_percaya_diri', value: 'Percaya Diri', eng: 'confident' }, { id: 'ekspresi_tenang', value: 'Tenang', eng: 'calm' }, { id: 'ekspresi_serius', value: 'Serius', eng: 'serious' }, { id: 'ekspresi_sinis', value: 'Sinis', eng: 'cynical' }, { id: 'ekspresi_berharap', value: 'Berharap', eng: 'hopeful' }, { id: 'ekspresi_putus_asa', value: 'Putus Asa', eng: 'desperate' }, { id: 'ekspresi_puas', value: 'Puas', eng: 'satisfied' }, { id: 'ekspresi_cinta', value: 'Cinta', eng: 'in love' }, { id: 'ekspresi_benci', value: 'Benci', eng: 'hateful' }, { id: 'ekspresi_cemburu', value: 'Cemburu', eng: 'jealous' }, { id: 'ekspresi_sakit', value: 'Sakit', eng: 'in pain' }, { id: 'ekspresi_netral', value: 'Netral', eng: 'neutral' } ];
@@ -972,7 +969,8 @@
                 
                 document.getElementById(`section_karakter_umum_${tabId}`).classList.add('hidden');
                 document.getElementById(`section_kelamin_spesifik_${tabId}`).classList.remove('hidden');
-                handlePekerjaanPakaianInteraction(tabId);
+                document.getElementById(`section_karakter_lain_${tabId}`).classList.add('hidden');
+                document.getElementById(`human_attributes_container_${tabId}`).classList.remove('hidden');
 
                 populateAllOptionsForTab(tabId);
                 initializeSubjectModifierListenersForTab(tabId);
@@ -982,6 +980,7 @@
 
         function populateAllOptionsForTab(tabId) {
             populateSelect(`karakterUmum_selector_${tabId}`, karakterUmumUsiaOptions);
+            populateSelect(`karakterLain_selector_${tabId}`, karakterLainOptions);
             populateOptions(`kelaminOptionsContainer_${tabId}`, kelaminOptionsBaseUpdated, { inputType: 'radio', groupName: `kelamin_selector_${tabId}`, tabId: tabId });
             populateOptions(`femaleTraitsOptionsContainer_${tabId}`, femaleTraitsOptions, { inputType: 'checkbox', tabId: tabId });
             populateSelect(`usia_selector_${tabId}`, usiaOptions);
@@ -1017,7 +1016,6 @@
             document.querySelectorAll('.tab-button').forEach(button => button.addEventListener('click', handleTabClick));
             document.getElementById('clearFormBtn').addEventListener('click', clearFullForm);
             document.getElementById('generateBtn').addEventListener('click', generateCombinedPrompt);
-            document.getElementById('generateImageBtn').addEventListener('click', sendToImagen);
             document.getElementById('copyIndonesianBtn').addEventListener('click', () => copyToClipboard(document.getElementById('generatedPromptIndonesian').value, 'Prompt Bahasa Indonesia'));
             document.getElementById('copyEnglishBtn').addEventListener('click', () => copyToClipboard(document.getElementById('generatedPromptEnglish').textContent, 'Prompt Bahasa Inggris'));
         }
@@ -1114,68 +1112,6 @@
                 setTimeout(() => notification.classList.add('hidden'), 500);
             }, 2000);
         }
-
-        async function sendToImagen() {
-            const apiKey = document.getElementById('apiKey').value.trim();
-            if (!apiKey) {
-                alert('Silakan masukkan Google AI API Key Anda.');
-                return;
-            }
-
-            const prompt = document.getElementById('generatedPromptEnglish').textContent;
-            if (!prompt) {
-                alert('Silakan buat prompt terlebih dahulu.');
-                return;
-            }
-
-            const imageResultContainer = document.getElementById('imageResultContainer');
-            const imageLoader = document.getElementById('imageLoader');
-            const imageWrapper = document.getElementById('imageWrapper');
-            const generatedImage = document.getElementById('generatedImage');
-            const downloadBtn = document.getElementById('downloadImageBtn');
-            
-            imageResultContainer.classList.remove('hidden');
-            imageLoader.classList.remove('hidden');
-            imageWrapper.classList.add('hidden');
-
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${apiKey}`;
-            const payload = {
-                instances: [{ "prompt": prompt }],
-                parameters: { "sampleCount": 1 }
-            };
-
-            try {
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                if (!response.ok) {
-                    const error = await response.json();
-                    throw new Error(`API Error: ${error.error.message}`);
-                }
-
-                const result = await response.json();
-                
-                if (result.predictions && result.predictions.length > 0 && result.predictions[0].bytesBase64Encoded) {
-                    const imageUrl = `data:image/png;base64,${result.predictions[0].bytesBase64Encoded}`;
-                    generatedImage.src = imageUrl;
-                    downloadBtn.href = imageUrl;
-                    imageLoader.classList.add('hidden');
-                    imageWrapper.classList.remove('hidden');
-                    showCopyNotification("Gambar", "dibuat");
-                } else {
-                    throw new Error("Respons API tidak valid atau tidak berisi gambar.");
-                }
-
-            } catch (error) {
-                console.error("Error calling Imagen API:", error);
-                alert(`Gagal membuat gambar: ${error.message}`);
-                imageLoader.classList.add('hidden');
-            }
-        }
-
 
         // --- Template Manager Logic ---
         function initializeTemplateManager() {
@@ -1329,3 +1265,4 @@
     </script>
 </body>
 </html>
+```
